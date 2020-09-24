@@ -1,0 +1,7 @@
+{
+  "name": "MovieMate",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
