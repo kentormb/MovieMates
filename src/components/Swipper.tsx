@@ -1,5 +1,6 @@
 import React from "react";
 import * as Hammer from 'hammerjs';
+//https://www.hackdoor.io/articles/8MNPqDpV/build-a-full-featured-tinder-like-carousel-in-vanilla-javascript
 
 class Carousel {
     private board: Element | null;
@@ -10,6 +11,7 @@ class Carousel {
     private startPosX: number | undefined;
     private startPosY: number | undefined;
     private isDraggingFrom: number  | undefined;
+    private nextCard: any;
 
     constructor(element: Element | null) {
 
@@ -86,6 +88,17 @@ class Carousel {
                     this.topCard.style.transform =
                         'translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg)'
 
+                    // get scale ratio, between .95 and 1
+                    let scale = (95 + (5 * Math.abs(propX))) / 100
+
+                    // move and rotate top card
+                    this.topCard.style.transform =
+                        'translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg) rotateY(0deg) scale(1)'
+
+                    // scale up next card
+                    if (this.nextCard) this.nextCard.style.transform =
+                        'translateX(-50%) translateY(-50%) rotate(0deg) rotateY(0deg) scale(' + scale + ')'
+
                     if (e.isFinal && this.board) {
 
                         this.isPanning = false
@@ -156,6 +169,30 @@ class Carousel {
 
         // @ts-ignore
         this.board.insertBefore(card, this.board.firstChild)
+
+    }
+
+    onTap(e:any) {
+
+        // get finger position on top card
+        let propX = (e.center.x - e.target.getBoundingClientRect().left) / e.target.clientWidth
+
+        // get rotation degrees around Y axis (+/- 15) based on finger position
+        let rotateY = 15 * (propX < 0.05 ? -1 : 1)
+
+        // enable transform transition
+        this.topCard.style.transition = 'transform 100ms ease-out'
+
+        // apply rotation around Y axis
+        this.topCard.style.transform =
+            'translateX(-50%) translateY(-50%) rotate(0deg) rotateY(' + rotateY + 'deg) scale(1)'
+
+        // wait for transition end
+        setTimeout(() => {
+            // reset transform properties
+            this.topCard.style.transform =
+                'translateX(-50%) translateY(-50%) rotate(0deg) rotateY(0deg) scale(1)'
+        }, 100)
 
     }
 }
