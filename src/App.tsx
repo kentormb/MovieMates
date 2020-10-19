@@ -1,29 +1,37 @@
-import Menu from './components/Menu';
-import Movies from './pages/Movies';
-import Matches from './pages/Matches';
-import Friends from './pages/Friends';
 import Login from './pages/Login';
+import Register from "./pages/Register";
+import AppPrivate from './AppPrivate';
 import React from 'react';
-import { IonApp, IonRouterOutlet, IonSplitPane } from '@ionic/react';
+import {IonApp, IonLoading, IonRouterOutlet} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
+import { AuthContext, useAuthInit } from './auth';
 
 const App: React.FC = () => {
 
+  const {loading,auth} = useAuthInit();
+
+  if(loading){
+    return (<IonLoading isOpen />);
+  }
   return (
     <IonApp>
-      <IonReactRouter>
-        <IonSplitPane contentId="main">
-          <Menu />
-          <IonRouterOutlet id="main">
-            <Route path="/movies" component={Movies} exact />
-            <Route path="/matches" component={Matches} exact />
-            <Route path="/friends" component={Friends} exact />
-            <Route path="/login" component={Login} exact />
-            <Redirect from="/" to="/movies" exact />
+      <AuthContext.Provider value={auth}>
+        <IonReactRouter>
+          <IonRouterOutlet>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <Route path="/register">
+              <Register />
+            </Route>
+            <Route path="/my">
+              <AppPrivate />
+            </Route>
+            <Redirect from="/" to="/my/movies" exact />
           </IonRouterOutlet>
-        </IonSplitPane>
-      </IonReactRouter>
+        </IonReactRouter>
+      </AuthContext.Provider>
     </IonApp>
   );
 };

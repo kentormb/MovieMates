@@ -1,4 +1,5 @@
 import {
+  IonButton,
   IonContent,
   IonIcon,
   IonItem,
@@ -9,11 +10,25 @@ import {
   IonMenuToggle,
   IonNote,
 } from '@ionic/react';
-
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { filmOutline, filmSharp, peopleOutline, peopleSharp, flameOutline, flameSharp,logIn, logInOutline } from 'ionicons/icons';
+import {
+  filmOutline,
+  filmSharp,
+  peopleOutline,
+  peopleSharp,
+  peopleCircleSharp,
+  peopleCircleOutline,
+  heartSharp,
+  heartOutline,
+  heartDislikeSharp,
+  heartDislikeOutline,
+  settingsOutline,
+  settingsSharp
+} from 'ionicons/icons';
 import './Menu.css';
+import { auth } from '../firebase';
+import { useAuth } from '../auth';
 
 interface AppPage {
   url: string;
@@ -25,27 +40,39 @@ interface AppPage {
 const appPages: AppPage[] = [
   {
     title: 'Movies',
-    url: '/movies',
+    url: '/my/movies',
     iosIcon: filmOutline,
     mdIcon: filmSharp
   },
   {
-    title: 'Matches',
-    url: '/matches',
-    iosIcon: flameOutline,
-    mdIcon: flameSharp
-  },
-  {
     title: 'Friends',
-    url: '/friends',
+    url: '/my/friends',
     iosIcon: peopleOutline,
     mdIcon: peopleSharp
   },
   {
-    title: 'Login',
-    url: '/login',
-    iosIcon: logIn,
-    mdIcon: logInOutline
+    title: 'Groups',
+    url: '/my/groups',
+    iosIcon: peopleCircleOutline,
+    mdIcon: peopleCircleSharp
+  },
+  {
+    title: 'Liked movies',
+    url: '/my/movies/liked',
+    iosIcon: heartOutline,
+    mdIcon: heartSharp
+  },
+  {
+    title: 'Disliked movies',
+    url: '/my/movies/disliked',
+    iosIcon: heartDislikeOutline,
+    mdIcon: heartDislikeSharp
+  },
+  {
+    title: 'Account Settings',
+    url: '/my/account',
+    iosIcon: settingsOutline,
+    mdIcon: settingsSharp
   }
 ];
 
@@ -56,7 +83,7 @@ const Menu: React.FC = () => {
     <IonMenu contentId="main" type="overlay">
       <IonContent>
         <IonList id="inbox-list">
-          <IonListHeader>Username</IonListHeader>
+          <IonListHeader>{useAuth().userEmail}</IonListHeader>
           <IonNote>this is a status</IonNote>
           {appPages.map((appPage, index) => {
             return (
@@ -69,6 +96,10 @@ const Menu: React.FC = () => {
             );
           })}
         </IonList>
+        <IonButton color="medium"
+                   expand="block"
+                   onClick={ () => auth.signOut() }
+        >Logout</IonButton>
       </IonContent>
     </IonMenu>
   );

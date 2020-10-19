@@ -14,7 +14,7 @@ const Movies: React.FC = () => {
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
-          <IonTitle>Matches</IonTitle>
+          <IonTitle>Account Settings</IonTitle>
         </IonToolbar>
       </IonHeader>
 

@@ -8,33 +8,30 @@ import {
     IonToolbar,
     IonButton,
     IonIcon,
-    IonModal
+    IonModal, IonLabel
 } from '@ionic/react';
 import React, {useState, useRef} from 'react';
 import { useParams } from 'react-router';
 import './Page.css';
-import {options} from "ionicons/icons";
+import {
+    options
+} from "ionicons/icons";
 import CategoriesListFilter from "../components/CategoriesListFilter";
 import Swipper from "../components/Swipper";
 
 const Movies: React.FC = () => {
-
-  const { name } = useParams<{ name: string; }>();
-  //const [showSearchbar, setShowSearchbar] = useState<boolean>(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const pageRef = useRef<HTMLElement>(null);
-
-  //const mode = 'md';
 
   return (
     <IonPage>
 
         <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
+            <IonButtons slot="start">
             <IonMenuButton />
-          </IonButtons>
-          <IonTitle>Movies</IonTitle>
+            </IonButtons>
+            <IonTitle><IonLabel>Movies</IonLabel></IonTitle>
             <IonButtons slot="end">
                 <IonButton onClick={() => setShowFilterModal(true)}>
                     <IonIcon icon={options} slot="icon-only" />
@@ -44,12 +41,7 @@ const Movies: React.FC = () => {
         </IonHeader>
 
         <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">{name} aaa</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <Swipper/>
+            <Swipper/>
         </IonContent>
 
         <IonModal

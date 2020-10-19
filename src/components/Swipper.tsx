@@ -1,5 +1,9 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import * as Hammer from 'hammerjs';
+import {IonLoading} from "@ionic/react";
+import {Card} from "./Card";
+import {getMovies, updateUsersMovies} from "./Api";
+import {getCurrentUser} from "../auth";
 //https://www.hackdoor.io/articles/8MNPqDpV/build-a-full-featured-tinder-like-carousel-in-vanilla-javascript
 
 class Carousel {
@@ -8,14 +12,16 @@ class Carousel {
     private topCard: any;
     private hammer: HammerManager | undefined;
     private isPanning: Boolean = false;
-    private startPosX: number | undefined;
-    private startPosY: number | undefined;
+    private startPosX: number = 0;
+    private startPosY: number = 0;
     private isDraggingFrom: number  | undefined;
     private nextCard: any;
+    private page: number;
 
-    constructor(element: Element | null) {
+    constructor(element: Element | null, page) {
 
         this.board = element;
+        this.page = page;
 
         // handle gestures
         this.handle();
@@ -66,16 +72,12 @@ class Carousel {
                     }
 
                     // get new coordinates
-                    // @ts-ignore
                     let posX = e.deltaX + this.startPosX
-                    // @ts-ignore
                     let posY = e.deltaY + this.startPosY
 
                     // get ratio between swiped pixels and the axes
                     // @ts-ignore
                     let propX = e.deltaX / this.board.clientWidth
-                    // @ts-ignore
-                    let propY = e.deltaY / this.board.clientHeight
 
                     // get swipe direction, left (-1) or right (1)
                     let dirX = e.deltaX < 0 ? -1 : 1
@@ -85,19 +87,16 @@ class Carousel {
                     let deg = this.isDraggingFrom * dirX * Math.abs(propX) * 45
 
                     // move and rotate card
-                    this.topCard.style.transform =
-                        'translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg)'
+                    this.topCard.style.transform ='translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg)'
 
                     // get scale ratio, between .95 and 1
                     let scale = (95 + (5 * Math.abs(propX))) / 100
 
                     // move and rotate top card
-                    this.topCard.style.transform =
-                        'translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg) rotateY(0deg) scale(1)'
+                    this.topCard.style.transform ='translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg) rotateY(0deg) scale(1)'
 
                     // scale up next card
-                    if (this.nextCard) this.nextCard.style.transform =
-                        'translateX(-50%) translateY(-50%) rotate(0deg) rotateY(0deg) scale(' + scale + ')'
+                    if (this.nextCard) this.nextCard.style.transform = 'translateX(-50%) translateY(-50%) rotate(0deg) rotateY(0deg) scale(' + scale + ')'
 
                     if (e.isFinal && this.board) {
 
@@ -115,65 +114,87 @@ class Carousel {
                             // get right border position
                             posX = this.board.clientWidth
 
-                        } else if (propX < -0.25 && e.direction === Hammer.DIRECTION_LEFT) {
+                            updateUsersMovies(getCurrentUser().uid, this.topCard.attributes.key.value,1);
+
+                        }
+                        else if (propX < -0.25 && e.direction === Hammer.DIRECTION_LEFT) {
 
                             successful = true
                             // get left border position
                             posX = - (this.board.clientWidth + this.topCard.clientWidth)
 
-                        } else if (propY < -0.25 && e.direction === Hammer.DIRECTION_UP) {
-
-                            successful = true
-                            // get top border position
-                            posY = - (this.board.clientHeight + this.topCard.clientHeight)
+                            updateUsersMovies(getCurrentUser().uid, this.topCard.attributes.key.value,0);
 
                         }
 
                         if (successful) {
 
                             // throw card in the chosen direction
-                            this.topCard.style.transform =
-                                'translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg)'
+                            this.topCard.style.transform = 'translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg)'
 
                             // wait transition end
                             setTimeout(() => {
                                 // remove swiped card
-                                // @ts-ignore
-                                this.board.removeChild(this.topCard)
-                                // add new card
-                                this.push()
-                                // handle gestures on new top card
-                                this.handle()
+                                try {
+                                    // @ts-ignore
+                                    this.board.removeChild(this.topCard)
+                                    // add new card
+                                    let  cardsleft = this.board.getElementsByClassName('card').length;
+                                    if(cardsleft === 15) {
+                                        this.push()
+
+                                    }
+                                    // handle gestures on new top card
+                                    this.handle()
+
+                                }
+                                catch (e){
+                                    console.log(e.message)
+                                }
                             }, 200)
 
                         } else {
-
                             // reset card position
-                            this.topCard.style.transform =
-                                'translateX(-50%) translateY(-50%) rotate(0deg)'
-
+                            this.topCard.style.transform = 'translateX(-50%) translateY(-50%) rotate(0deg)'
                         }
-
                     }
+                });
+
+                this.hammer.on("tap", (e) => {
+                    this.tap(e);
+                    const mi = this.topCard.getElementsByClassName('moreinfo')[0];
+                    if (mi.style.display === "none") {
+                        mi.style.display = "block";
+                    } else {
+                        mi.style.display = "none";
+                    }
+
                 });
             }
         }
     }
 
     push() {
-
-        let card = document.createElement('div')
-        card.classList.add('card')
-
-        card.style.backgroundColor = "#" + (Math.floor(Math.random()*16777215).toString(16))
-
-        // @ts-ignore
-        this.board.insertBefore(card, this.board.firstChild)
-
+        if(this.board){
+            console.log('reload started');
+            console.time("reload start");
+            getMovies(this.page, getCurrentUser().uid).then((results) => {
+                try {
+                    for (const [index, value] of  Object.entries(results)) {
+                        const card = Card((+index*this.page),value);
+                        this.board.insertBefore(card, this.board.firstChild)
+                    }
+                    console.log('reload completed');
+                    this.page++;
+                    //this.handle()
+                    console.timeEnd("reload start");
+                }
+                catch (e) { }
+            });
+        }
     }
 
-    onTap(e:any) {
-
+    tap(e:any) {
         // get finger position on top card
         let propX = (e.center.x - e.target.getBoundingClientRect().left) / e.target.clientWidth
 
@@ -194,24 +215,39 @@ class Carousel {
                 'translateX(-50%) translateY(-50%) rotate(0deg) rotateY(0deg) scale(1)'
         }, 100)
 
+
+
     }
 }
 
 const Swipper: React.FC = () => {
 
-    let board = document.querySelector('#board')
-    new Carousel(board)
+    const [isLoaded, setIsLoaded] = useState(false);
 
-    return (
-        <div id="board">
-            <div className="c1 card"/>
-            <div className="c2 card"/>
-            <div className="c3 card"/>
-            <div className="c4 card"/>
-            <div className="c5 card"/>
-        </div>
-    );
+    useEffect(() => {
+        getMovies(1, getCurrentUser().uid ).then((results) => {
+            setIsLoaded(true);
+            try {
+                let board = document.querySelector('#board');
+                for (const [index, value] of  Object.entries(results)) {
+                    board.append(Card(+index,value));
+                }
+                new Carousel(board,2);
+            }
+            catch (e) {
+                setIsLoaded(false);
+            }
 
+        });
+    }, []);
+
+    if (!isLoaded) {
+        return (<IonLoading isOpen/>);
+    } else {
+        return (
+            <div id="board"></div>
+        );
+    }
 }
 
 export default Swipper;
