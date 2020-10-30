@@ -162,13 +162,6 @@ class Carousel {
 
                 this.hammer.on("tap", (e) => {
                     this.tap(e);
-                    const mi = this.topCard.getElementsByClassName('moreinfo')[0];
-                    if (mi.style.display === "none") {
-                        mi.style.display = "block";
-                    } else {
-                        mi.style.display = "none";
-                    }
-
                 });
             }
         }
@@ -176,18 +169,13 @@ class Carousel {
 
     push() {
         if(this.board){
-            console.log('reload started');
-            console.time("reload start");
             getMovies(this.page, getCurrentUser().uid).then((results) => {
                 try {
                     for (const [index, value] of  Object.entries(results)) {
                         const card = Card((+index*this.page),value);
                         this.board.insertBefore(card, this.board.firstChild)
                     }
-                    console.log('reload completed');
                     this.page++;
-                    //this.handle()
-                    console.timeEnd("reload start");
                 }
                 catch (e) { }
             });

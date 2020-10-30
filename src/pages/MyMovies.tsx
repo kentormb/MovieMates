@@ -6,23 +6,15 @@ import {
     IonPage,
     IonTitle,
     IonToolbar,
-    IonButton,
-    IonIcon,
-    IonModal, IonLabel
+    IonLabel, IonRefresherContent, IonRefresher
 } from '@ionic/react';
-import React, {useState, useRef} from 'react';
+import React from 'react';
 import { useParams } from 'react-router';
 import './Page.css';
-import {
-    options
-} from "ionicons/icons";
-import CategoriesListFilter from "../components/CategoriesListFilter";
-import Swipper from "../components/Swipper";
+import SelectedMovies from '../components/SelectedMovies';
 
 const Movies: React.FC = () => {
   const { status } = useParams();
-  const [showFilterModal, setShowFilterModal] = useState(false);
-  const pageRef = useRef<HTMLElement>(null);
 
   return (
     <IonPage>
@@ -44,29 +36,10 @@ const Movies: React.FC = () => {
                     }
                 })()}
             </IonTitle>
-            <IonButtons slot="end">
-                <IonButton onClick={() => setShowFilterModal(true)}>
-                    <IonIcon icon={options} slot="icon-only" />
-                </IonButton>
-            </IonButtons>
         </IonToolbar>
         </IonHeader>
 
-        <IonContent fullscreen>
-            <Swipper/>
-        </IonContent>
-
-        <IonModal
-            isOpen={showFilterModal}
-            onDidDismiss={() => setShowFilterModal(false)}
-            swipeToClose={true}
-            presentingElement={pageRef.current!}
-            cssClass="session-list-filter"
-        >
-            <CategoriesListFilter
-                onDismissModal={() => setShowFilterModal(false)}
-            />
-        </IonModal>
+        <SelectedMovies status={status}/>
     </IonPage>
   );
 };

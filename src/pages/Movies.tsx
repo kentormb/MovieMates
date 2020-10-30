@@ -11,7 +11,6 @@ import {
     IonModal, IonLabel
 } from '@ionic/react';
 import React, {useState, useRef} from 'react';
-import { useParams } from 'react-router';
 import './Page.css';
 import {
     options

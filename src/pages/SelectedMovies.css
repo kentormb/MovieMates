@@ -1,0 +1,56 @@
+#selected_board{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap-reverse;
+    flex-wrap: wrap;
+    padding: 5px;
+}
+
+#selected_board .card{
+    width: 47%;
+    width: calc(50% - 10px);
+    max-width: none;
+    max-height: none;
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: none;
+    margin: 5px;
+}
+
+#selected_board .card .poster{
+    min-height: auto;
+    height: auto;
+}
+
+#selected_board .card .content{
+    height: 23px;
+}
+#selected_board .card .title{
+    display: none;
+}
+
+#selected_board .card .moreinfo{
+    position: fixed;
+    top: 63px;
+    z-index: 9;
+    left: 0;
+    margin: 0 5px;
+    height: 90%;
+    height: calc(100% - 63px);
+}
+
+#selected_board .card .button{
+    padding: 7px;
+    text-align: center;
+    color: white;
+}
+
+#selected_board .card .button.disliked{
+    background-color: #0b7a1d;
+}
+
+#selected_board .card .button.liked{
+    background-color: #bf0b0b;
+}

@@ -1,5 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {auth as firebaseAuth} from "./firebase";
+import { Plugins } from '@capacitor/core';
+import {getUser} from "./components/Api";
 
 interface Auth{
     loggedIn: boolean;
@@ -23,11 +25,24 @@ export function useAuthInit(){
 
     useEffect(() => {
         return firebaseAuth.onAuthStateChanged((firebaseUser) => {
-            const auth = firebaseUser ?
-                {loggedIn: true, userId: firebaseUser.uid, userEmail: firebaseUser.email} :
-                {loggedIn: false};
+            let auth = {loggedIn: false, userId: '', userEmail: ''};
+            if(firebaseUser){
+                auth = {loggedIn: true, userId: firebaseUser.uid, userEmail: firebaseUser.email};
+                getUser(firebaseUser.uid, firebaseUser.email).then((results) => {
+                    if(results.error === 0){
+                        const { Storage } = Plugins;
+                        Storage.set({
+                            key: 'user',
+                            value: JSON.stringify({
+                                username: results.result.username,
+                                name: results.result.name,
+                                photo: 'https://image.tmdb.org/t/p/w200' + results.result.icon
+                            })
+                        });
+                    }
+                });
+            }
             setAuthInit({loading:false, auth});
-
         });
     }, []);
 

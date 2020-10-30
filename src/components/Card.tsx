@@ -2,20 +2,20 @@ export function Card(index,result){
 
     const date = new Date(result.releaseDate);
 
-    const div = document.createElement('div');
-    div.setAttribute('class','card');
-    div.setAttribute('key',result.movieId);
+    const card = document.createElement('div');
+    card.setAttribute('class','card');
+    card.setAttribute('key',result.movieId);
 
     const poster = document.createElement('div');
     poster.setAttribute('class','poster');
-    div.append(poster);
+    card.append(poster);
     const img = document.createElement('img');
     img.src = 'https://image.tmdb.org/t/p/w400/' + result.poster;
     poster.append(img);
 
     const content = document.createElement('div');
     content.setAttribute('class','content');
-    div.append(content);
+    card.append(content);
 
     const title = document.createElement('div');
     title.setAttribute('class','title');
@@ -59,7 +59,14 @@ export function Card(index,result){
     const moreinfo = document.createElement('div');
     moreinfo.setAttribute('class','moreinfo');
     moreinfo.style.display = 'none';
-    div.append(moreinfo);
+    moreinfo.addEventListener('click', () => {
+        if (moreinfo.style.display === "none") {
+            moreinfo.style.display = "block";
+        } else {
+            moreinfo.style.display = "none";
+        }
+    });
+    card.append(moreinfo);
 
     const original_language = document.createElement('div');
     original_language.setAttribute('class','original_language');
@@ -96,5 +103,13 @@ export function Card(index,result){
     overview.innerText = '' + result.description;
     moreinfo.append(overview);
 
-    return div;
+    poster.addEventListener('click', () => {
+        if (moreinfo.style.display === "none") {
+            moreinfo.style.display = "block";
+        } else {
+            moreinfo.style.display = "none";
+        }
+    });
+
+    return card;
 }

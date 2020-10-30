@@ -14,7 +14,6 @@ import './Page.css';
 import {Redirect} from "react-router";
 import { useAuth } from '../auth';
 import { auth } from '../firebase';
-import { saveUser } from "../components/Api";
 
 const Register: React.FC = () => {
 
@@ -27,8 +26,7 @@ const Register: React.FC = () => {
     const registerLandle = async () => {
         try {
             setStatus({error:false, loading: true, message: ''});
-            let firebaseuser = await auth.createUserWithEmailAndPassword(email, password);
-            await saveUser(firebaseuser.user.uid, firebaseuser.user.email, false);
+            await auth.createUserWithEmailAndPassword(email, password);
         }
         catch (error){
             setStatus({error:true, loading: false, message: error.message});

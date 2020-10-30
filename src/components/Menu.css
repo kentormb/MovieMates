@@ -110,4 +110,14 @@ ion-note {
 
 ion-item.selected {
   --color: var(--ion-color-primary);
-} 
+}
+
+ion-menu .menu-avatar{
+  position: absolute;
+  left: 0;
+  top: 10px;
+}
+ion-menu .menu-list-header,
+ion-menu .menu-note{
+  margin-left: 70px;
+}

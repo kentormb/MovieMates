@@ -2,6 +2,7 @@ import Menu from './components/Menu';
 import Movies from './pages/Movies';
 import MyMovies from './pages/MyMovies';
 import Friends from './pages/Friends';
+import Friend from './pages/Friend';
 import Groups from './pages/Groups';
 import AccountSettings from './pages/AccountSettings';
 import React from 'react';
@@ -21,11 +22,12 @@ const App: React.FC = () => {
         <Menu />
         <IonRouterOutlet id="main">
             <Route path="/my/movies/" component={Movies} exact />
-            <Route path="/my/movies/:status" component={MyMovies} exact />
+            <Route path="/my/movies/view/:status" component={MyMovies} exact />
             <Route path="/my/friends" component={Friends} exact />
+            <Route path="/my/friend/:id" component={Friend} exact />
             <Route path="/my/groups" component={Groups} exact />
             <Route path="/my/account" component={AccountSettings} exact />
-          <Redirect from="/my" to="/my/movies" exact />
+            <Redirect from="/my" to="/my/movies" exact />
         </IonRouterOutlet>
       </IonSplitPane>
   );
