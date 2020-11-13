@@ -17,7 +17,7 @@ export function getMovies(page: number = 1,
     const when = options.when;
     const what = options.what;
     const cat = options.cat;
-    const url = 'http://marios.com.gr/movies/api.php?userid=' + useId + '&page=' + page + '&when=' + when + '&what=' + what + '&cat=' + cat + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=13&userid=' + useId + '&page=' + page + '&when=' + when + '&what=' + what + '&cat=' + cat + '&token=' + token;
     //console.log('get movies', url);
     return fetch(url)
         .then(res => res.json())
@@ -30,7 +30,7 @@ export function getMovies(page: number = 1,
 export function getUsersMovies(page: number = 1, useId: string | number, mstatus: number){
 
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/apiliked.php?userid=' + useId + '&page=' + page + '&mstatus=' + mstatus + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=14&userid=' + useId + '&page=' + page + '&mstatus=' + mstatus + '&token=' + token;
     //console.log('get user movies', url);
     return fetch(url)
         .then(res => res.json())
@@ -43,7 +43,7 @@ export function getUsersMovies(page: number = 1, useId: string | number, mstatus
 export function getMatchedMovies(uid: string, fid: number){
 
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/apiuser.php?status=11&fid=' + fid + '&uid=' + uid + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=11&fid=' + fid + '&uid=' + uid + '&token=' + token;
     //console.log('get matched movies', url);
     return fetch(url)
         .then(res => res.json())
@@ -57,7 +57,7 @@ export function saveUser(uid: string, email: string, check: boolean = false){
 
     const token = getToken();
     const status = check ? 2 : 1;
-    const url = 'http://marios.com.gr/movies/apiuser.php?status=' + status + '&email=' + email + '&uid=' + uid + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=' + status + '&email=' + email + '&uid=' + uid + '&token=' + token;
     //console.log('save user', url);
     return fetch(url)
         .then(res => res.json())
@@ -69,7 +69,7 @@ export function saveUser(uid: string, email: string, check: boolean = false){
 export function getUser(uid: string, email: string){
 
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/apiuser.php?status=4&uid=' + uid + '&email=' + email + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=4&uid=' + uid + '&email=' + email + '&token=' + token;
     //console.log('get user', url);
     return fetch(url)
         .then(res => res.json())
@@ -82,7 +82,7 @@ export function getUser(uid: string, email: string){
 export function updateUsersMovies(uid: string, mid: number, mstatus: number){
 
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/apiuser.php?status=3&uid=' + uid + '&mid=' + mid + '&mstatus=' + mstatus + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=3&uid=' + uid + '&mid=' + mid + '&mstatus=' + mstatus + '&token=' + token;
     //console.log('update movies', url);
     fetch(url)
         .then(res => res.json())
@@ -108,7 +108,7 @@ export function getRandomAvatar(){
 
 export function getMenuCounts(uid: string){
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/apiuser.php?status=5&uid=' + uid + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=5&uid=' + uid + '&token=' + token;
     //console.log('get menu count', url);
     return fetch(url)
         .then(res => res.json())
@@ -121,7 +121,7 @@ export function getMenuCounts(uid: string){
 export function searchFriend(uid: string, q: string){
 
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/apiuser.php?status=6&q=' + q + '&uid=' + uid + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=6&q=' + q + '&uid=' + uid + '&token=' + token;
     //console.log('save user', url);
     return fetch(url)
         .then(res => res.json())
@@ -134,7 +134,7 @@ export function searchFriend(uid: string, q: string){
 export function addFriend(uid: string, fid: number){
 
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/apiuser.php?status=7&fid=' + fid + '&uid=' + uid + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=7&fid=' + fid + '&uid=' + uid + '&token=' + token;
     //console.log('add friend', url);
     return fetch(url)
         .then(res => res.json())
@@ -146,7 +146,7 @@ export function addFriend(uid: string, fid: number){
 export function deleteFriend(uid: string, fid: number){
 
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/apiuser.php?status=12&fid=' + fid + '&uid=' + uid + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=12&fid=' + fid + '&uid=' + uid + '&token=' + token;
     //console.log('add friend', url);
     return fetch(url)
         .then(res => res.json())
@@ -158,7 +158,7 @@ export function deleteFriend(uid: string, fid: number){
 export function getFriends(uid: string, fstatus: number){
 
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/apiuser.php?status=8&fstatus=' + fstatus + '&uid=' + uid + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=8&fstatus=' + fstatus + '&uid=' + uid + '&token=' + token;
     //console.log('get user friends', url);
     return fetch(url)
         .then(res => res.json())
@@ -171,7 +171,7 @@ export function getFriends(uid: string, fstatus: number){
 export function getFriendById(uid: number){
 
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/apiuser.php?status=9&uid=' + uid + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=9&uid=' + uid + '&token=' + token;
     //console.log('get freind by id', url);
     return fetch(url)
         .then(res => res.json())
@@ -183,7 +183,19 @@ export function getFriendById(uid: number){
 
 export function acceptFriendRequest(fid:number, status:boolean){
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/apiuser.php?status=10&fid=' + fid + '&reqstatus=' + status + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api.php?status=10&fid=' + fid + '&reqstatus=' + status + '&token=' + token;
+    //console.log('accept friend request', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+            return result;
+        })
+        .catch(error => console.warn(error));
+}
+
+export function seenThisMovie(uid:string, mid:number, status:number){
+    const token = getToken();
+    const url = 'http://marios.com.gr/movies/api.php?status=15&uid=' + uid + '&mid='+ mid + '&mstatus='+ status + '&token=' + token;
     //console.log('accept friend request', url);
     return fetch(url)
         .then(res => res.json())

@@ -5,6 +5,11 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'hammerjs';
 
+/* Redux */
+import { Provider } from 'react-redux';
+import reducer from './store/reducer';
+import { createStore } from 'redux';
+
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 
@@ -23,11 +28,15 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import {AppContextProvider} from "./State";
+
+const store = createStore(reducer)
 
 const { SplashScreen } = Plugins;
-ReactDOM.render(<AppContextProvider><App /></AppContextProvider>, document.getElementById('root'));
-
+ReactDOM.render(
+    <Provider store={store}>
+        <App />
+    </Provider>,
+    document.getElementById('root'));
 SplashScreen.hide();
 
 // If you want your app to work offline and load faster, you can change

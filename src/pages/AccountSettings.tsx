@@ -1,4 +1,4 @@
-import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import {IonButtons, IonCard, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import React from 'react';
 import { useParams } from 'react-router';
 import './Page.css';
@@ -24,7 +24,9 @@ const Movies: React.FC = () => {
             <IonTitle size="large">{name}</IonTitle>
           </IonToolbar>
         </IonHeader>
-          dfg
+          <IonCard>
+              This page is under construction
+          </IonCard>
       </IonContent>
     </IonPage>
   );

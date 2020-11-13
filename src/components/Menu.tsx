@@ -32,6 +32,10 @@ import {auth} from '../firebase';
 import {Plugins} from "@capacitor/core";
 import {getMenuCounts} from "./Api";
 import {getCurrentUser} from "../auth";
+import {StateProps} from '../store/reducer';
+import { useSelector } from "react-redux"
+import {Dispatch} from "redux";
+import { useDispatch } from "react-redux"
 
 interface AppPage {
   url: string;
@@ -42,6 +46,7 @@ interface AppPage {
 }
 
 const Menu: React.FC = () => {
+
   const location = useLocation();
   const [ userInfo, setUserInfo ] = useState({username:'',name:'',photo:''});
   const { Storage } = Plugins;
@@ -49,6 +54,7 @@ const Menu: React.FC = () => {
   const [friendsCount, setFriendsCount] = useState(-1)
   const [likedCount, setLikedCount] = useState(-1)
   const [dislikedCount, dissetLikedCount] = useState(-1)
+
   const appPages: AppPage[] = [
     {
       title: 'Movies',
@@ -94,6 +100,33 @@ const Menu: React.FC = () => {
     }
   ];
 
+  const dispatch: Dispatch<any> = useDispatch();
+  const updateMenu = React.useCallback(
+      () => {
+        getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number})=>{
+          dispatch({
+            type: 'UPDATE_MENU',
+            payload: {disliked: mc.disliked, friends: mc.friends, liked: mc.liked}
+        })
+      })},
+      []
+  );
+
+
+  const menu = useSelector<StateProps>((state: StateProps) => {
+    return state.menu
+  });
+
+  useEffect(()=>{
+    updateMenu();
+  },[]);
+
+  useEffect(() => {
+    setFriendsCount(menu.friends)
+    setLikedCount(menu.liked)
+    dissetLikedCount(menu.disliked)
+  },[menu]);
+
   useEffect(() => {
     //TODO remove timeout
     setTimeout(()=>{
@@ -102,13 +135,6 @@ const Menu: React.FC = () => {
           setUserInfo( JSON.parse(result.value))
       });
     }, 1000)
-
-    getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number})=>{
-      setFriendsCount(mc.friends)
-      setLikedCount(mc.liked)
-      dissetLikedCount(mc.disliked)
-    })
-
   },[Storage]);
 
   return (

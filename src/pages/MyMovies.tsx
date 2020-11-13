@@ -1,19 +1,18 @@
 import {
     IonButtons,
-    IonContent,
     IonHeader,
     IonMenuButton,
     IonPage,
     IonTitle,
     IonToolbar,
-    IonLabel, IonRefresherContent, IonRefresher
+    IonLabel
 } from '@ionic/react';
 import React from 'react';
 import { useParams } from 'react-router';
 import './Page.css';
 import SelectedMovies from '../components/SelectedMovies';
 
-const Movies: React.FC = () => {
+const MyMovies: React.FC = () => {
   const { status } = useParams();
 
   return (
@@ -44,4 +43,4 @@ const Movies: React.FC = () => {
   );
 };
 
-export default Movies;
+export default MyMovies;

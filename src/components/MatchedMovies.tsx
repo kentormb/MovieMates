@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {IonLoading} from "@ionic/react";
+import {IonLoading, useIonViewDidEnter, useIonViewWillEnter} from "@ionic/react";
 import '../pages/SelectedMovies.css';
 import {getMatchedMovies} from "./Api";
 import {getCurrentUser} from "../auth";
@@ -12,12 +12,13 @@ interface Prop{
 const SelectedMovies: React.FC<Prop> = ({id}) => {
 
     const [isLoaded, setIsLoaded] = useState(false);
+    const [cards, setCards] = useState([])
 
-    useEffect(() => {
+    useIonViewDidEnter(() => {
         getMatchedMovies(getCurrentUser().uid, id ).then((results) => {
             setIsLoaded(true);
             try {
-                let board = document.querySelector('#selected_board');
+                let board = document.querySelector('#selected_board_m');
                 board.innerHTML = '';
                 for (const [index, value] of  Object.entries(results)) {
                     const card = Card(+index,value);
@@ -29,13 +30,13 @@ const SelectedMovies: React.FC<Prop> = ({id}) => {
             }
 
         });
-    }, [id]);
+    });
 
     if (!isLoaded) {
         return (<IonLoading isOpen/>);
     } else {
         return (
-            <div id="selected_board"/>
+            <div id="selected_board_m" className={"selected_board"}/>
         );
     }
 }

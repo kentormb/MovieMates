@@ -120,9 +120,33 @@
     margin-top: 40px;
 }
 
+.card .trailer{
+    margin-top: 10px;
+    text-align: center;
+}
+
 .friend-avatar{
     margin-right: 5px;
 }
-.mm-request.mm-item{
-    display: none;
+ion-list.mm-list{
+    width: 100%;
+}
+
+.friends-matches-badge{
+    background: #084229;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    padding: 2px;
+    border-radius: 3px;
+    text-align: center;
+    color: white;
+    min-width: 15px;
+    font-size: 10px;
+    border: 1px solid #032516;
+    box-shadow: 1px 1px 4px black;
+}
+
+.swiper-slide img{
+    width: 100%;
 }

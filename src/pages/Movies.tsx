@@ -12,19 +12,17 @@ import {
 } from '@ionic/react';
 import React, {useState, useRef} from 'react';
 import './Page.css';
-import {
-    options
-} from "ionicons/icons";
+import { options } from "ionicons/icons";
 import CategoriesListFilter from "../components/CategoriesListFilter";
 import Swipper from "../components/Swipper";
 
 const Movies: React.FC = () => {
-  const [showFilterModal, setShowFilterModal] = useState(false);
-  const pageRef = useRef<HTMLElement>(null);
 
-  return (
+    const [showFilterModal, setShowFilterModal] = useState(false);
+    const pageRef = useRef<HTMLElement>(null);
+
+    return (
     <IonPage>
-
         <IonHeader>
         <IonToolbar>
             <IonButtons slot="start">
@@ -38,11 +36,9 @@ const Movies: React.FC = () => {
             </IonButtons>
         </IonToolbar>
         </IonHeader>
-
         <IonContent fullscreen>
             <Swipper/>
         </IonContent>
-
         <IonModal
             isOpen={showFilterModal}
             onDidDismiss={() => setShowFilterModal(false)}
@@ -55,7 +51,7 @@ const Movies: React.FC = () => {
             />
         </IonModal>
     </IonPage>
-  );
+    );
 };
 
 export default Movies;

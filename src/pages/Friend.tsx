@@ -1,12 +1,11 @@
 import {
-    IonBackButton,
-    IonButton,
+    IonBackButton, IonButton,
     IonButtons,
     IonContent,
     IonHeader, IonIcon,
     IonPage,
     IonTitle,
-    IonToolbar
+    IonToolbar, useIonViewWillEnter
 } from '@ionic/react';
 import React, {useEffect, useState} from 'react';
 import { useParams } from 'react-router';
@@ -14,23 +13,27 @@ import './Page.css';
 import MatchedMovies from '../components/MatchedMovies';
 import {deleteFriend, getFriendById} from "../components/Api";
 import {trashOutline, trashSharp} from "ionicons/icons";
+import { useHistory } from 'react-router-dom';
 import {getCurrentUser} from "../auth";
 
-function deleteFriendHandle(id: number) {
-    deleteFriend(getCurrentUser().uid, id).then(()=>{
-        //TODO remove user from list
-    })
-}
 
-const Movies: React.FC = () => {
+const Friend: React.FC = () => {
   const { id } = useParams();
   const [userData, getUserData] = useState({name: '', icon: ''});
+  const history = useHistory()
 
-  useEffect(()=>{
+    function deleteFriendHandle(id: number) {
+        deleteFriend(getCurrentUser().uid, id).then(()=>{
+            history.goBack()
+        })
+
+    }
+
+  useIonViewWillEnter(()=>{
       getFriendById(id).then((result)=>{
           getUserData({name: result.result.name, icon: result.result.icon});
       })
-  },[id]);
+  });
 
   return (
       <IonPage>
@@ -40,9 +43,9 @@ const Movies: React.FC = () => {
                       <IonBackButton />
                   </IonButtons>
                   <IonTitle>{userData.name}</IonTitle>
-                  {/*<IonButton  slot="end" onClick={ () => { deleteFriendHandle(id) }} color="medium">*/}
-                  {/*    <IonIcon ios={trashSharp} md={trashOutline}/>*/}
-                  {/*</IonButton>*/}
+                  <IonButton  slot="end" onClick={ () => { deleteFriendHandle(id) }} color="medium">
+                      <IonIcon ios={trashSharp} md={trashOutline}/>
+                  </IonButton>
               </IonToolbar>
           </IonHeader>
           <IonContent fullscreen>
@@ -52,4 +55,4 @@ const Movies: React.FC = () => {
   );
 };
 
-export default Movies;
+export default Friend;

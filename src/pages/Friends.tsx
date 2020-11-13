@@ -1,38 +1,84 @@
 import {
-  IonAvatar, IonBadge,
+  IonAvatar,
+  IonBadge,
   IonButton,
   IonButtons,
-  IonContent, IonFab, IonFabButton,
+  IonContent,
+  IonFab,
+  IonFabButton,
   IonHeader,
-  IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList,
-  IonMenuButton, IonModal,
-  IonPage, IonRadio, IonRadioGroup, IonRefresher, IonRefresherContent, IonSearchbar, IonSegment, IonSegmentButton,
-  IonTitle, IonToast,
-  IonToolbar
+  IonIcon,
+  IonItem, IonItemOption, IonItemOptions, IonItemSliding,
+  IonLabel,
+  IonList,
+  IonMenuButton,
+  IonModal,
+  IonPage,
+  IonRadio,
+  IonRadioGroup,
+  IonRefresher,
+  IonRefresherContent,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton, IonSlide,
+  IonSlides,
+  IonTitle,
+  IonToast,
+  IonToolbar,
+  useIonViewWillEnter
 } from '@ionic/react';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './Page.css';
-import {add} from "ionicons/icons";
+import {add, trashOutline, trashSharp} from "ionicons/icons";
 import {getCurrentUser} from "../auth";
-import {addFriend, searchFriend, getFriends} from '../components/Api'
-import FriendItem from "../components/FriendItem";
+import {addFriend, searchFriend, getFriends, acceptFriendRequest, deleteFriend} from '../components/Api'
 import { RefresherEventDetail } from '@ionic/core';
 
-const Movies: React.FC = () => {
+const Friends: React.FC = () => {
 
   const [showModal, setShowModal] = useState(false);
-  const [searchQuery, setsearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [friendList, setFriendList] = useState([]);
+  const [reqFriendList, setReqFriendList] = useState([]);
   const [friendSearchList, setFriendSearchList] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(0);
-  const [friendRequestsCount, setfriendRequestsCount] = useState(0);
+  const slider = useRef<HTMLIonSlidesElement>(null);
+  const [value, setValue] = useState("0");
+
+  function acceptRequest(fid:number, status: boolean = true, key: number){
+    acceptFriendRequest(fid,status,).then((result)=>{
+      if(result.error === 0){
+        setFriendList(friendList.concat(reqFriendList.filter(item => item.id === key )))
+        setReqFriendList(reqFriendList.filter(item => item.id !== key))
+
+
+      }
+    })
+  }
+
+  function deleteFriendHandle(id: number, key: number) {
+    deleteFriend(getCurrentUser().uid, id).then(()=>{
+      //getUserFriends(3)
+    })
+  }
+
+  const handleSegmentChange = (e: any) => {
+    setValue(e.detail.value);
+    slider.current!.slideTo(e.detail.value);
+  };
+
+  const handleSlideChange = async (event: any) => {
+    let index: number = 0;
+    await event.target.getActiveIndex().then((value: any) => (index=value));
+    setValue(''+index)
+  }
 
   async function getUserFriends(fstatus:number = 3){
     await getFriends(getCurrentUser().uid,fstatus).then((results)=>{
       if(results.error === 0){
-        setFriendList(results.result)
-        setfriendRequestsCount(results.result.filter((item)=>item.status===0).length)
+        setFriendList(results.result.filter((item)=>item.status===1))
+        setReqFriendList(results.result.filter((item)=>item.status===0))
       }
       else{
         setFriendList([])
@@ -48,14 +94,14 @@ const Movies: React.FC = () => {
   }
 
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
-    getUserFriends(3).then(()=>{
+    getUserFriends().then(()=>{
       event.detail.complete()
     })
   }
 
-  useEffect(() => {
-    getUserFriends(3)
-  },[])
+  useIonViewWillEnter(() => {
+    getUserFriends(3).then();
+  });
 
   useEffect(() => {
     if(searchQuery.length > 2){
@@ -84,30 +130,49 @@ const Movies: React.FC = () => {
         <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
           <IonRefresherContent/>
         </IonRefresher>
-        <IonSegment value={"mm-friend"} onIonChange={e => {
-          var divsToHide = document.getElementsByClassName('mm-item')
-          for(var i = 0; i < divsToHide.length; i++){
-            if(divsToHide[i].className.includes(e.detail.value)){
-              // @ts-ignore
-              divsToHide[i].style.display = "block";
-            }
-            else{
-              // @ts-ignore
-              divsToHide[i].style.display = "none";
-            }
-          }
-        }}>
-          <IonSegmentButton value="mm-friend" >
+        <IonSegment value={value} onIonChange={(e) => handleSegmentChange(e)} >
+          <IonSegmentButton value="0" >
             <IonLabel>Friends</IonLabel>
           </IonSegmentButton>
-          <IonSegmentButton value="mm-request">
-            <IonLabel>Friend Requests {friendRequestsCount===0 ? '' : <IonBadge  color="danger" slot="end">{friendRequestsCount}</IonBadge> }</IonLabel>
+          <IonSegmentButton value="1">
+            <IonLabel>Friend Requests {reqFriendList.length===0 ? '' : <IonBadge  color="danger" slot="end">{reqFriendList.length}</IonBadge> }</IonLabel>
           </IonSegmentButton>
         </IonSegment>
         <IonContent>
-          <IonList lines='full'>
-            {friendList.map((item) => <FriendItem key={item.id} item={item} />)}
-          </IonList>
+          <IonSlides onIonSlideDidChange={(e) => handleSlideChange(e)} ref={slider}>
+            <IonSlide>
+              <IonList className={"mm-list"}>
+                {friendList.map((item) =>
+                  <IonItem key={item.id} class='mm-friend mm-item' button routerLink={'/my/friend/' + item.id}>
+                    <IonAvatar className="friend-avatar">
+                      <img src={'https://image.tmdb.org/t/p/w200' + item.icon} alt=''/>
+                    </IonAvatar>
+                    <IonLabel>{item.username} ({item.name})</IonLabel>
+                    {item.matches !== 0 ? <span className={"friends-matches-badge"}>{item.matches}</span> : ''}
+                  </IonItem>
+                )}
+              </IonList>
+            </IonSlide>
+            <IonSlide>
+              <IonList className={"mm-list"}>
+                {reqFriendList.map((item) =>
+                    <IonItemSliding key={item.id}>
+                      <IonItem key={item.id} class='mm-request mm-item' >
+                        <IonAvatar className="friend-avatar">
+                          <img src={'https://image.tmdb.org/t/p/w200' + item.icon} alt=''/>
+                        </IonAvatar>
+                        <IonLabel>{item.username} ({item.name})</IonLabel>
+                        <IonButton onClick={ () => acceptRequest(item.fid,true, item.id)} color="success">Accept</IonButton>
+                      </IonItem>
+                      <IonItemOptions side="end">
+                        <IonItemOption color="danger" expandable onClick={ () => { deleteFriendHandle(item.id, item.id) }} >
+                          <IonIcon size="large" ios={trashSharp} md={trashOutline}/>
+                        </IonItemOption>
+                      </IonItemOptions>
+                    </IonItemSliding>)}
+              </IonList>
+            </IonSlide>
+          </IonSlides>
         </IonContent>
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton  onClick={() => setShowModal(true)}>
@@ -126,7 +191,7 @@ const Movies: React.FC = () => {
             </IonToolbar>
           </IonHeader>
             <IonSearchbar onIonChange={e => {
-              setsearchQuery(e.detail.value);
+              setSearchQuery(e.detail.value);
             }}/>
           <IonContent id="search_results">
             <IonList lines='full'>
@@ -161,4 +226,4 @@ const Movies: React.FC = () => {
   );
 };
 
-export default Movies;
+export default Friends;
