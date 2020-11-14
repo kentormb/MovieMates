@@ -243,7 +243,7 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
             }
 
         });
-    }, [rootDispatcher]);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!isLoaded) {
         return (<IonLoading isOpen/>);
