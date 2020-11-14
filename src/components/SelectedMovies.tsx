@@ -1,10 +1,13 @@
-import React, { useState } from "react";
-import {IonContent, IonLoading, IonRefresher, IonRefresherContent, useIonViewWillEnter} from "@ionic/react";
+import React, {useEffect, useState} from "react";
+import {IonContent, IonLoading, IonRefresher, IonRefresherContent} from "@ionic/react";
 import {Card} from "./Card";
 import {getUsersMovies, seenThisMovie, updateUsersMovies} from "./Api";
 import {getCurrentUser} from "../auth";
-import '../pages/SelectedMovies.css';
 import {RefresherEventDetail} from "@ionic/core";
+import {RootDispatcher} from "../store/reducer";
+import { useDispatch } from "react-redux"
+
+import '../pages/SelectedMovies.css';
 
 interface Prop{
     status: string | number;
@@ -13,6 +16,8 @@ interface Prop{
 const SelectedMovies: React.FC<Prop> = ({status}) => {
 
     const [isLoaded, setIsLoaded] = useState(false);
+    const dispatch = useDispatch();
+    const rootDispatcher = new RootDispatcher(dispatch);
 
     function seenThis(mid,status){
         seenThisMovie(getCurrentUser().uid, mid, status).then(()=>{
@@ -52,6 +57,7 @@ const SelectedMovies: React.FC<Prop> = ({status}) => {
     }
 
     async function getMovies(){
+
         getUsersMovies(1, getCurrentUser().uid, status === 'liked' ? 1 : 0 ).then((results) => {
             setIsLoaded(true);
             try {
@@ -73,7 +79,12 @@ const SelectedMovies: React.FC<Prop> = ({status}) => {
                         button.setAttribute('class','button liked');
                         button.addEventListener('click', ()=>{
                             // @ts-ignore
-                            updateUsersMovies(getCurrentUser().uid, value.movieId,0);
+                            updateUsersMovies(getCurrentUser().uid, value.movieId,0).then((result)=>{
+                                if(result.error === 0){
+                                    rootDispatcher.decLiked();
+                                    rootDispatcher.incDisLiked();
+                                }
+                            });
                             card.remove();
                         })
                     }
@@ -82,7 +93,12 @@ const SelectedMovies: React.FC<Prop> = ({status}) => {
                         button.setAttribute('class','button disliked');
                         button.addEventListener('click', ()=>{
                             // @ts-ignore
-                            updateUsersMovies(getCurrentUser().uid, value.movieId,1);
+                            updateUsersMovies(getCurrentUser().uid, value.movieId,1).then((result)=>{
+                                if(result.error === 0){
+                                    rootDispatcher.incLiked();
+                                    rootDispatcher.decDisLiked();
+                                }
+                            });
                             card.remove();
                         })
                     }
@@ -105,9 +121,9 @@ const SelectedMovies: React.FC<Prop> = ({status}) => {
         })
     }
 
-    useIonViewWillEnter(() => {
+    useEffect(() => {
         getMovies().then();
-    });
+    },[status]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!isLoaded) {
         return (<IonLoading isOpen/>);

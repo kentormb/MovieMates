@@ -12,7 +12,7 @@ import {StateProps} from '../store/reducer';
 
 // const dispatch: Dispatch<any> = useDispatch()
 //
-// export const updateMenu = React.useCallback(
+// const updateMenu = React.useCallback(
 //     () => dispatch({type: 'UPDATE_MENU', payload: {disliked: 1, friends: 2, liked: 3}}),
 //     []
 // )

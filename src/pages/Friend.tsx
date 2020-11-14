@@ -7,7 +7,7 @@ import {
     IonTitle,
     IonToolbar, useIonViewWillEnter
 } from '@ionic/react';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { useParams } from 'react-router';
 import './Page.css';
 import MatchedMovies from '../components/MatchedMovies';

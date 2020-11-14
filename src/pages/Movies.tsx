@@ -15,11 +15,16 @@ import './Page.css';
 import { options } from "ionicons/icons";
 import CategoriesListFilter from "../components/CategoriesListFilter";
 import Swipper from "../components/Swipper";
+import {useDispatch} from "react-redux";
+import {RootDispatcher} from "../store/reducer";
 
 const Movies: React.FC = () => {
 
     const [showFilterModal, setShowFilterModal] = useState(false);
     const pageRef = useRef<HTMLElement>(null);
+
+    const dispatch = useDispatch();
+    const rootDispatcher = new RootDispatcher(dispatch);
 
     return (
     <IonPage>
@@ -37,7 +42,7 @@ const Movies: React.FC = () => {
         </IonToolbar>
         </IonHeader>
         <IonContent fullscreen>
-            <Swipper/>
+            <Swipper rootDispatcher={rootDispatcher}/>
         </IonContent>
         <IonModal
             isOpen={showFilterModal}

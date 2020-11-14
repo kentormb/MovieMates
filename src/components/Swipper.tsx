@@ -17,11 +17,14 @@ class Carousel {
     private isDraggingFrom: number  | undefined;
     private nextCard: any;
     private page: number;
+    private rootDispatcher: any;
 
-    constructor(element: Element | null, page) {
+    constructor(element: Element | null, page, rootDispatcher: any = null) {
 
         this.board = element;
         this.page = page;
+
+        this.rootDispatcher = rootDispatcher;
 
         // handle gestures
         this.handle();
@@ -114,7 +117,11 @@ class Carousel {
                             // get right border position
                             posX = this.board.clientWidth
 
-                            updateUsersMovies(getCurrentUser().uid, this.topCard.attributes.key.value,1);
+                            updateUsersMovies(getCurrentUser().uid, this.topCard.attributes.key.value,1).then((result) => {
+                                if(result.error === 0){
+                                    this.rootDispatcher.incLiked();
+                                }
+                            });
 
                         }
                         else if (propX < -0.25 && e.direction === Hammer.DIRECTION_LEFT) {
@@ -123,7 +130,11 @@ class Carousel {
                             // get left border position
                             posX = - (this.board.clientWidth + this.topCard.clientWidth)
 
-                            updateUsersMovies(getCurrentUser().uid, this.topCard.attributes.key.value,0);
+                            updateUsersMovies(getCurrentUser().uid, this.topCard.attributes.key.value,0).then((result) => {
+                                if(result.error === 0){
+                                    this.rootDispatcher.incDisLiked();
+                                }
+                            });
 
                         }
 
@@ -208,7 +219,12 @@ class Carousel {
     }
 }
 
-const Swipper: React.FC = () => {
+interface Props{
+    rootDispatcher: any;
+}
+
+
+const Swipper: React.FC<Props> = ({rootDispatcher}) => {
 
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -220,14 +236,14 @@ const Swipper: React.FC = () => {
                 for (const [index, value] of  Object.entries(results)) {
                     board.append(Card(+index,value));
                 }
-                new Carousel(board,2);
+                new Carousel(board,2, rootDispatcher);
             }
             catch (e) {
                 setIsLoaded(false);
             }
 
         });
-    }, []);
+    }, [rootDispatcher]);
 
     if (!isLoaded) {
         return (<IonLoading isOpen/>);

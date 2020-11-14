@@ -14,7 +14,6 @@ import SelectedMovies from '../components/SelectedMovies';
 
 const MyMovies: React.FC = () => {
   const { status } = useParams();
-
   return (
     <IonPage>
         <IonHeader>

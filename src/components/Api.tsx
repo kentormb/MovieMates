@@ -84,26 +84,21 @@ export function updateUsersMovies(uid: string, mid: number, mstatus: number){
     const token = getToken();
     const url = 'http://marios.com.gr/movies/api.php?status=3&uid=' + uid + '&mid=' + mid + '&mstatus=' + mstatus + '&token=' + token;
     //console.log('update movies', url);
-    fetch(url)
+    return fetch(url)
         .then(res => res.json())
         .catch(error => console.warn(error));
 }
 
-export function getRandomAvatar(){
-    return fetch('https://uifaces.co/api?limit=1&gender[]=male&gender[]=female&from_age=18&to_age=60&emotion[]=happiness',
-        {
-        method: 'GET',
-        headers: {
-            'X-API-KEY': '8646C8FF-9598491F-954281E5-011FBE56',
-            'Accept': 'application/json',
-            'Cache-Control': 'no-cache'
-        }
-    })
-    .then(res => res.json())
-    .then((result) => {
-        return result;
-    })
-    .catch(error => console.warn(error));
+export function getRandomAvatar(name){
+    //https://stackoverflow.com/questions/6150289/how-can-i-convert-an-image-into-base64-string-using-javascript
+    return fetch('https://eu.ui-avatars.com/api/?background=random&name='+name)
+        .then(response => response.blob())
+        .then(blob => new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result)
+            reader.onerror = reject
+            reader.readAsDataURL(blob)
+        }))
 }
 
 export function getMenuCounts(uid: string){

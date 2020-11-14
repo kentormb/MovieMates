@@ -32,10 +32,8 @@ import {auth} from '../firebase';
 import {Plugins} from "@capacitor/core";
 import {getMenuCounts} from "./Api";
 import {getCurrentUser} from "../auth";
-import {StateProps} from '../store/reducer';
-import { useSelector } from "react-redux"
-import {Dispatch} from "redux";
-import { useDispatch } from "react-redux"
+import {RootDispatcher, StateProps} from '../store/reducer';
+import { useDispatch, useSelector } from "react-redux"
 
 interface AppPage {
   url: string;
@@ -53,7 +51,7 @@ const Menu: React.FC = () => {
 
   const [friendsCount, setFriendsCount] = useState(-1)
   const [likedCount, setLikedCount] = useState(-1)
-  const [dislikedCount, dissetLikedCount] = useState(-1)
+  const [dislikedCount, setDisLikedCount] = useState(-1)
 
   const appPages: AppPage[] = [
     {
@@ -100,17 +98,8 @@ const Menu: React.FC = () => {
     }
   ];
 
-  const dispatch: Dispatch<any> = useDispatch();
-  const updateMenu = React.useCallback(
-      () => {
-        getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number})=>{
-          dispatch({
-            type: 'UPDATE_MENU',
-            payload: {disliked: mc.disliked, friends: mc.friends, liked: mc.liked}
-        })
-      })},
-      []
-  );
+  const dispatch = useDispatch();
+
 
 
   const menu = useSelector<StateProps>((state: StateProps) => {
@@ -118,13 +107,18 @@ const Menu: React.FC = () => {
   });
 
   useEffect(()=>{
+    const updateMenu = () => {
+      getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number})=>{
+        const rootDispatcher = new RootDispatcher(dispatch);
+        rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked})})
+    }
     updateMenu();
-  },[]);
+  },[dispatch]);
 
   useEffect(() => {
     setFriendsCount(menu.friends)
     setLikedCount(menu.liked)
-    dissetLikedCount(menu.disliked)
+    setDisLikedCount(menu.disliked)
   },[menu]);
 
   useEffect(() => {

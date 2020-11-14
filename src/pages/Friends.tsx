@@ -145,7 +145,7 @@ const Friends: React.FC = () => {
                 {friendList.map((item) =>
                   <IonItem key={item.id} class='mm-friend mm-item' button routerLink={'/my/friend/' + item.id}>
                     <IonAvatar className="friend-avatar">
-                      <img src={'https://image.tmdb.org/t/p/w200' + item.icon} alt=''/>
+                      <img src={item.icon} alt=''/>
                     </IonAvatar>
                     <IonLabel>{item.username} ({item.name})</IonLabel>
                     {item.matches !== 0 ? <span className={"friends-matches-badge"}>{item.matches}</span> : ''}
@@ -159,7 +159,7 @@ const Friends: React.FC = () => {
                     <IonItemSliding key={item.id}>
                       <IonItem key={item.id} class='mm-request mm-item' >
                         <IonAvatar className="friend-avatar">
-                          <img src={'https://image.tmdb.org/t/p/w200' + item.icon} alt=''/>
+                          <img src={item.icon} alt=''/>
                         </IonAvatar>
                         <IonLabel>{item.username} ({item.name})</IonLabel>
                         <IonButton onClick={ () => acceptRequest(item.fid,true, item.id)} color="success">Accept</IonButton>
@@ -199,7 +199,7 @@ const Friends: React.FC = () => {
               {friendSearchList.map((item) =>
                   <IonItem key={item.id}>
                     <IonAvatar className="friend-avatar">
-                      <img src={'https://image.tmdb.org/t/p/w200' + item.icon} alt="" />
+                      <img src={item.icon} alt="" />
                     </IonAvatar>
                     <IonLabel>{item.username} ({item.name})</IonLabel>
                     <IonRadio

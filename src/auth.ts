@@ -36,7 +36,7 @@ export function useAuthInit(){
                             value: JSON.stringify({
                                 username: results.result.username,
                                 name: results.result.name,
-                                photo: 'https://image.tmdb.org/t/p/w200' + results.result.icon
+                                photo: results.result.icon
                             })
                         });
                     }

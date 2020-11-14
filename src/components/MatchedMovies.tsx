@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {IonLoading, useIonViewDidEnter, useIonViewWillEnter} from "@ionic/react";
+import React, {useState} from "react";
+import {IonLoading, useIonViewDidEnter} from "@ionic/react";
 import '../pages/SelectedMovies.css';
 import {getMatchedMovies} from "./Api";
 import {getCurrentUser} from "../auth";
@@ -12,7 +12,6 @@ interface Prop{
 const SelectedMovies: React.FC<Prop> = ({id}) => {
 
     const [isLoaded, setIsLoaded] = useState(false);
-    const [cards, setCards] = useState([])
 
     useIonViewDidEnter(() => {
         getMatchedMovies(getCurrentUser().uid, id ).then((results) => {
