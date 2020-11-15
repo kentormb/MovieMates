@@ -150,3 +150,25 @@ ion-list.mm-list{
 .swiper-slide img{
     width: 100%;
 }
+
+.qr-img-btn{
+    position: absolute;
+    top: 20px;
+    right: 0;
+}
+
+.qr-img-container{
+    background-color: #ffffff85;
+}
+
+.qr-img-container .popover-content{
+    padding: 20px;
+    background-color: white;
+    width: 80%;
+    top: 40px!important;
+}
+
+.qr-img-container .popover-content ion-img{
+    max-width: 300px;
+    margin: 0 auto 30px auto;
+}

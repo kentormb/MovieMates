@@ -36,7 +36,8 @@ export function useAuthInit(){
                             value: JSON.stringify({
                                 username: results.result.username,
                                 name: results.result.name,
-                                photo: results.result.icon
+                                photo: results.result.icon,
+                                qr: results.result.qr
                             })
                         });
                     }

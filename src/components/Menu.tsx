@@ -1,15 +1,15 @@
 import {
   IonAvatar, IonBadge,
-  IonButton,
+  IonButton, IonButtons, IonCard,
   IonContent,
-  IonIcon,
+  IonIcon, IonImg,
   IonItem,
   IonLabel,
   IonList,
   IonListHeader,
   IonMenu,
   IonMenuToggle,
-  IonNote,
+  IonNote, IonPopover,
 } from '@ionic/react';
 import React, {useEffect, useState} from 'react';
 import { useLocation } from 'react-router-dom';
@@ -25,7 +25,7 @@ import {
   heartDislikeSharp,
   heartDislikeOutline,
   settingsOutline,
-  settingsSharp
+  settingsSharp, qrCodeSharp, qrCodeOutline
 } from 'ionicons/icons';
 import './Menu.css';
 import {auth} from '../firebase';
@@ -46,12 +46,13 @@ interface AppPage {
 const Menu: React.FC = () => {
 
   const location = useLocation();
-  const [ userInfo, setUserInfo ] = useState({username:'',name:'',photo:''});
+  const [ userInfo, setUserInfo ] = useState({username:'',name:'',photo:'',qr:''});
   const { Storage } = Plugins;
 
   const [friendsCount, setFriendsCount] = useState(-1)
   const [likedCount, setLikedCount] = useState(-1)
   const [dislikedCount, setDisLikedCount] = useState(-1)
+  const [qrImage, setQrImage] = useState(false)
 
   const appPages: AppPage[] = [
     {
@@ -141,7 +142,11 @@ const Menu: React.FC = () => {
           </IonAvatar>
           <IonListHeader className="menu-list-header">{userInfo.username}</IonListHeader>
           <IonNote className="menu-note">{userInfo.name}</IonNote>
-
+          <IonButtons slot="end" className={"qr-img-btn"}>
+            <IonButton onClick={() => {setQrImage(true)}}>
+              <IonIcon icon={qrCodeOutline} slot="icon-only"/>
+            </IonButton>
+          </IonButtons>
           {appPages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
@@ -162,6 +167,16 @@ const Menu: React.FC = () => {
                    expand="block"
                    onClick={ () => auth.signOut() }
         >Logout</IonButton>
+        <IonPopover
+            isOpen={qrImage}
+            animated={true}
+            cssClass='qr-img-container'
+            onDidDismiss={e => {setQrImage(false)}}
+        >
+          <IonImg src={userInfo.qr} alt="" />
+          <IonButton expand="full" onClick={() => {setQrImage(false)}}>Close</IonButton>
+        </IonPopover>
+
       </IonContent>
     </IonMenu>
   );

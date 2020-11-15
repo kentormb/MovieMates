@@ -29,10 +29,12 @@ import {
 } from '@ionic/react';
 import React, {useEffect, useRef, useState} from 'react';
 import './Page.css';
-import {add, trashOutline, trashSharp} from "ionicons/icons";
+import {add, trashOutline, trashSharp, qrCodeOutline, qrCodeSharp} from "ionicons/icons";
 import {getCurrentUser} from "../auth";
 import {addFriend, searchFriend, getFriends, acceptFriendRequest, deleteFriend} from '../components/Api'
 import { RefresherEventDetail } from '@ionic/core';
+import QrReader from 'react-qr-reader';
+// https://morioh.com/p/9845cd2a2b19
 
 const Friends: React.FC = () => {
 
@@ -45,6 +47,7 @@ const Friends: React.FC = () => {
   const [selectedFriend, setSelectedFriend] = useState(0);
   const slider = useRef<HTMLIonSlidesElement>(null);
   const [value, setValue] = useState("0");
+  const [qrScanner, setQrScanner] = useState(false);
 
   function acceptRequest(fid:number, status: boolean = true, key: number){
     acceptFriendRequest(fid,status,).then((result)=>{
@@ -72,6 +75,17 @@ const Friends: React.FC = () => {
     let index: number = 0;
     await event.target.getActiveIndex().then((value: any) => (index=value));
     setValue(''+index)
+  }
+
+  const handleScan = data => {
+    if (data) {
+      setSearchQuery(data);
+      setQrScanner(false);
+    }
+  }
+
+  const handleError = err => {
+    console.error(err)
   }
 
   async function getUserFriends(fstatus:number = 3){
@@ -147,7 +161,7 @@ const Friends: React.FC = () => {
                     <IonAvatar className="friend-avatar">
                       <img src={item.icon} alt=''/>
                     </IonAvatar>
-                    <IonLabel>{item.username} ({item.name})</IonLabel>
+                    <IonLabel>{item.username} {item.name!=='' ? '(' + item.name + ')' : ''}</IonLabel>
                     {item.matches !== 0 ? <span className={"friends-matches-badge"}>{item.matches}</span> : ''}
                   </IonItem>
                 )}
@@ -161,7 +175,7 @@ const Friends: React.FC = () => {
                         <IonAvatar className="friend-avatar">
                           <img src={item.icon} alt=''/>
                         </IonAvatar>
-                        <IonLabel>{item.username} ({item.name})</IonLabel>
+                        <IonLabel>{item.username} {item.name!=='' ? '(' + item.name + ')' : ''}</IonLabel>
                         <IonButton onClick={ () => acceptRequest(item.fid,true, item.id)} color="success">Accept</IonButton>
                       </IonItem>
                       <IonItemOptions side="end">
@@ -184,8 +198,13 @@ const Friends: React.FC = () => {
             <IonToolbar color="primary">
               <IonTitle>Add a freind</IonTitle>
               <IonButtons slot="end">
+                <IonButton onClick={() => {setQrScanner(true)}}>
+                  <IonIcon ios={qrCodeSharp} md={qrCodeOutline} slot="icon-only"/>
+                </IonButton>
+              </IonButtons>
+              <IonButtons slot="end">
                 <IonButton onClick={() => setShowModal(false)}>
-                  <IonIcon name="close" slot="icon-only"/>
+                  <IonIcon icon="close" slot="icon-only"/>
                 </IonButton>
               </IonButtons>
             </IonToolbar>
@@ -194,6 +213,12 @@ const Friends: React.FC = () => {
               setSearchQuery(e.detail.value);
             }}/>
           <IonContent id="search_results">
+            {qrScanner ? <QrReader
+                delay={300}
+                onError={handleError}
+                onScan={handleScan}
+                style={{ width: '100%' }}
+            />:''}
             <IonList lines='full'>
               <IonRadioGroup value={selectedFriend} onIonChange={e => setSelectedFriend(e.detail.value)}>
               {friendSearchList.map((item) =>
@@ -201,7 +226,7 @@ const Friends: React.FC = () => {
                     <IonAvatar className="friend-avatar">
                       <img src={item.icon} alt="" />
                     </IonAvatar>
-                    <IonLabel>{item.username} ({item.name})</IonLabel>
+                    <IonLabel>{item.username} {item.name!=='' ? '(' + item.name + ')' : ''}</IonLabel>
                     <IonRadio
                         name="friend"
                         color="primary"
