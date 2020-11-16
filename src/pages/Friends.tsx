@@ -29,7 +29,7 @@ import {
 } from '@ionic/react';
 import React, {useEffect, useRef, useState} from 'react';
 import './Page.css';
-import {add, trashOutline, trashSharp, qrCodeOutline, qrCodeSharp} from "ionicons/icons";
+import {add, trashOutline, trashSharp, qrCodeSharp} from "ionicons/icons";
 import {getCurrentUser} from "../auth";
 import {addFriend, searchFriend, getFriends, acceptFriendRequest, deleteFriend} from '../components/Api'
 import { RefresherEventDetail } from '@ionic/core';
@@ -48,21 +48,28 @@ const Friends: React.FC = () => {
   const slider = useRef<HTMLIonSlidesElement>(null);
   const [value, setValue] = useState("0");
   const [qrScanner, setQrScanner] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
+
+  function dismissSearchModal(){
+    setShowModal(false);
+    setSelectedFriend(0);
+    setShowModal(false);
+    setFriendSearchList([]);
+    setQrScanner(false);
+  }
 
   function acceptRequest(fid:number, status: boolean = true, key: number){
     acceptFriendRequest(fid,status,).then((result)=>{
       if(result.error === 0){
         setFriendList(friendList.concat(reqFriendList.filter(item => item.id === key )))
         setReqFriendList(reqFriendList.filter(item => item.id !== key))
-
-
       }
     })
   }
 
   function deleteFriendHandle(id: number, key: number) {
     deleteFriend(getCurrentUser().uid, id).then(()=>{
-      //getUserFriends(3)
+
     })
   }
 
@@ -101,10 +108,17 @@ const Friends: React.FC = () => {
   }
 
   function addFriendBtn(){
-    addFriend(getCurrentUser().uid, selectedFriend).then((result)=>{
-      setShowToast(true)
-      setShowModal(false)
-    })
+    if(selectedFriend !== 0) {
+      addFriend(getCurrentUser().uid, selectedFriend).then((result) => {
+        setSelectedFriend(0);
+        setShowToast(true);
+        setShowModal(false);
+        setFriendSearchList([]);
+      });
+    }
+    else{
+      setShowErrorToast(true)
+    }
   }
 
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
@@ -198,12 +212,12 @@ const Friends: React.FC = () => {
             <IonToolbar color="primary">
               <IonTitle>Add a freind</IonTitle>
               <IonButtons slot="end">
-                <IonButton onClick={() => {setQrScanner(true)}}>
-                  <IonIcon ios={qrCodeSharp} md={qrCodeOutline} slot="icon-only"/>
+                <IonButton onClick={() => {setQrScanner(!qrScanner)}}>
+                  <IonIcon icon={qrCodeSharp} slot="icon-only"/>
                 </IonButton>
               </IonButtons>
               <IonButtons slot="end">
-                <IonButton onClick={() => setShowModal(false)}>
+                <IonButton onClick={() => dismissSearchModal()}>
                   <IonIcon icon="close" slot="icon-only"/>
                 </IonButton>
               </IonButtons>
@@ -245,6 +259,13 @@ const Friends: React.FC = () => {
             message="Friend request has been sent"
             duration={2500}
             color={'success'}
+        />
+        <IonToast
+            isOpen={showErrorToast}
+            onDidDismiss={() => setShowErrorToast(false)}
+            message="You have not selected any friends"
+            duration={2500}
+            color={'danger'}
         />
       </IonContent>
     </IonPage>

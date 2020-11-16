@@ -1,7 +1,9 @@
 import React, {useContext, useEffect, useState} from "react";
 import {auth as firebaseAuth} from "./firebase";
-import { Plugins } from '@capacitor/core';
 import {getUser} from "./components/Api";
+import { Dispatch } from "redux"
+import { useDispatch } from "react-redux"
+import {RootDispatcher} from "./store/reducer";
 
 interface Auth{
     loggedIn: boolean;
@@ -22,30 +24,30 @@ export function useAuth():Auth{
 
 export function useAuthInit(){
     const [authInit, setAuthInit] = useState<AuthInit>({loading:true});
+    const dispatch: Dispatch<any> = useDispatch();
+    const rootDispatcher = new RootDispatcher(dispatch);
 
     useEffect(() => {
         return firebaseAuth.onAuthStateChanged((firebaseUser) => {
             let auth = {loggedIn: false, userId: '', userEmail: ''};
             if(firebaseUser){
                 auth = {loggedIn: true, userId: firebaseUser.uid, userEmail: firebaseUser.email};
+
                 getUser(firebaseUser.uid, firebaseUser.email).then((results) => {
                     if(results.error === 0){
-                        const { Storage } = Plugins;
-                        Storage.set({
-                            key: 'user',
-                            value: JSON.stringify({
-                                username: results.result.username,
-                                name: results.result.name,
-                                photo: results.result.icon,
-                                qr: results.result.qr
-                            })
-                        });
+                        const user = {
+                            username: results.result.username,
+                            name: results.result.name,
+                            photo: results.result.icon,
+                            qr: results.result.qr
+                        }
+                        rootDispatcher.updateUser(user)
                     }
                 });
             }
             setAuthInit({loading:false, auth});
         });
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return authInit;
 }

@@ -1,6 +1,6 @@
 import {
   IonAvatar, IonBadge,
-  IonButton, IonButtons, IonCard,
+  IonButton, IonButtons,
   IonContent,
   IonIcon, IonImg,
   IonItem,
@@ -25,11 +25,10 @@ import {
   heartDislikeSharp,
   heartDislikeOutline,
   settingsOutline,
-  settingsSharp, qrCodeSharp, qrCodeOutline
+  settingsSharp, qrCodeSharp, ribbonOutline, ribbonSharp
 } from 'ionicons/icons';
 import './Menu.css';
 import {auth} from '../firebase';
-import {Plugins} from "@capacitor/core";
 import {getMenuCounts} from "./Api";
 import {getCurrentUser} from "../auth";
 import {RootDispatcher, StateProps} from '../store/reducer';
@@ -46,9 +45,7 @@ interface AppPage {
 const Menu: React.FC = () => {
 
   const location = useLocation();
-  const [ userInfo, setUserInfo ] = useState({username:'',name:'',photo:'',qr:''});
-  const { Storage } = Plugins;
-
+  //const [ userInfo, setUserInfo ] = useState({username:'',name:'',photo:'',qr:''});
   const [friendsCount, setFriendsCount] = useState(-1)
   const [likedCount, setLikedCount] = useState(-1)
   const [dislikedCount, setDisLikedCount] = useState(-1)
@@ -77,6 +74,13 @@ const Menu: React.FC = () => {
       badge: -1
     },
     {
+      title: 'Top 10',
+      url: '/my/top10',
+      iosIcon: ribbonOutline,
+      mdIcon: ribbonSharp,
+      badge: -1
+    },
+    {
       title: 'Liked movies',
       url: '/my/movies/view/liked',
       iosIcon: heartOutline,
@@ -101,10 +105,12 @@ const Menu: React.FC = () => {
 
   const dispatch = useDispatch();
 
-
-
   const menu = useSelector<StateProps>((state: StateProps) => {
     return state.menu
+  });
+
+  const userInfo = useSelector<StateProps>((state: StateProps) => {
+    return state.user
   });
 
   useEffect(()=>{
@@ -122,29 +128,19 @@ const Menu: React.FC = () => {
     setDisLikedCount(menu.disliked)
   },[menu]);
 
-  useEffect(() => {
-    //TODO remove timeout
-    setTimeout(()=>{
-      Storage.get({ key: 'user' }).then((result)=>{
-        if(result)
-          setUserInfo( JSON.parse(result.value))
-      });
-    }, 1000)
-  },[Storage]);
-
   return (
     <IonMenu contentId="main" type="overlay">
       <IonContent>
         <IonList id="inbox-list">
 
           <IonAvatar className="menu-avatar">
-            <img src={userInfo.photo} alt="" />
+            <IonImg src={userInfo?.photo} alt="" />
           </IonAvatar>
-          <IonListHeader className="menu-list-header">{userInfo.username}</IonListHeader>
-          <IonNote className="menu-note">{userInfo.name}</IonNote>
+          <IonListHeader className="menu-list-header">{userInfo?.username}</IonListHeader>
+          <IonNote className="menu-note">{userInfo?.name ? userInfo?.name : getCurrentUser().email }</IonNote>
           <IonButtons slot="end" className={"qr-img-btn"}>
             <IonButton onClick={() => {setQrImage(true)}}>
-              <IonIcon icon={qrCodeOutline} slot="icon-only"/>
+              <IonIcon icon={qrCodeSharp} slot="icon-only"/>
             </IonButton>
           </IonButtons>
           {appPages.map((appPage, index) => {
@@ -173,7 +169,7 @@ const Menu: React.FC = () => {
             cssClass='qr-img-container'
             onDidDismiss={e => {setQrImage(false)}}
         >
-          <IonImg src={userInfo.qr} alt="" />
+          <IonImg src={userInfo?.qr} alt="" />
           <IonButton expand="full" onClick={() => {setQrImage(false)}}>Close</IonButton>
         </IonPopover>
 

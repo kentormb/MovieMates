@@ -16,3 +16,18 @@ import {StateProps} from '../store/reducer';
 //     () => dispatch({type: 'UPDATE_MENU', payload: {disliked: 1, friends: 2, liked: 3}}),
 //     []
 // )
+
+// import { Plugins } from '@capacitor/core';
+// const { Storage } = Plugins;
+// Storage.get({ key: 'user' }).then((result)=>{
+//     if(result)
+//         setUserInfo( JSON.parse(result.value))
+//
+//     console.log('bbb', result)
+// });
+
+
+// Storage.set({
+//     key: 'user',
+//     value: JSON.stringify(user)
+// });

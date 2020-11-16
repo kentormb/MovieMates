@@ -9,6 +9,7 @@ import React from 'react';
 import {IonRouterOutlet, IonSplitPane} from '@ionic/react';
 import { Redirect, Route } from 'react-router-dom';
 import {useAuth} from "./auth";
+import Top10 from "./pages/Top10";
 // import { Dispatch } from "redux"
 // import { useDispatch, useSelector } from "react-redux"
 // import {StateProps} from './store/reducer';
@@ -44,6 +45,7 @@ const App: React.FC = () => {
             <Route path="/my/movies/view/:status" component={MyMovies} exact />
             <Route path="/my/friends" component={Friends} exact />
             <Route path="/my/friend/:id" component={Friend} exact />
+            <Route path="/my/top10" component={Top10} exact />
             <Route path="/my/groups" component={Groups} exact />
             <Route path="/my/account" component={AccountSettings} exact />
             <Redirect from="/my" to="/my/movies" exact />

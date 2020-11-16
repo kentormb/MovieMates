@@ -1,15 +1,30 @@
 import Login from './pages/Login';
 import Register from "./pages/Register";
 import AppPrivate from './AppPrivate';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {IonApp, IonLoading, IonRouterOutlet} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
-import { AuthContext, useAuthInit } from './auth';
+import {AuthContext, useAuthInit} from './auth';
 
 const App: React.FC = () => {
 
   const {loading,auth} = useAuthInit();
+
+  const backButton = (ev) => {
+    ev.preventDefault()
+    if(window.history.back() !== undefined){
+      window.history.back()
+    }
+    else{
+      window.location.href = '/my/movies'
+    }
+  }
+
+  useEffect(()=>{
+    document.removeEventListener('ionBackButton', backButton, false);
+    document.addEventListener('ionBackButton', backButton, false);
+  },[]);
 
   if(loading){
     return (<IonLoading isOpen />);

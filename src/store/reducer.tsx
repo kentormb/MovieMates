@@ -18,13 +18,13 @@ export enum ActionType {
 
 export const initialState = {
     menu: {disliked: 0, friends: 0, liked: 0},
-    user: { username: '', name: '', photo: ''},
+    user: { username: '', name: '', photo: '', qr: ''},
     friends: []
 }
 
 export interface StateProps {
     menu: {disliked: number, friends: number, liked: number},
-    user: { username: string, name: string, photo: string},
+    user: { username: string, name: string, photo: string, qr: string},
     friends: []
 }
 
@@ -33,7 +33,6 @@ interface DispatchAction extends Action<ActionType> {
 }
 
 const reducer = (state = initialState, action) => {
-    console.log(state,action)
     switch (action.type) {
         case ActionType.UPDATE_MENU:
             return {
@@ -88,7 +87,7 @@ const reducer = (state = initialState, action) => {
         case ActionType.UPDATE_USER:
             return {
                 ...state,
-                user: { username: action.payload.username, name: action.payload.name, photo: action.payload.photo}
+                user: { username: action.payload.username, name: action.payload.name, photo: action.payload.photo, qr: action.payload.qr}
             }
         case ActionType.UPDATE_FRIENDS:
             return {
@@ -112,6 +111,7 @@ export class RootDispatcher {
     decLiked = () => this.dispatch({type: ActionType.UPDATE_MENU_LIKES_DEC, payload: {}});
     incDisLiked = () => this.dispatch({type: ActionType.UPDATE_MENU_DISLIKES_INC, payload: {}});
     decDisLiked = () => this.dispatch({type: ActionType.UPDATE_MENU_DISLIKES_DEC, payload: {}});
+    updateUser = (payload) => this.dispatch({type: ActionType.UPDATE_USER, payload: payload});
 }
 
 export default reducer;

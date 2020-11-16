@@ -1,6 +1,6 @@
 {
-  "appId": "io.ionic.starter",
-  "appName": "MovieMate",
+  "appId": "movie.mates.app",
+  "appName": "MovieMates",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "build",

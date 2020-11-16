@@ -16,7 +16,7 @@
     left: 50%;
     border-radius: 3px;
     box-shadow: 0px 4px 4px 0px #8686861a;
-    background-color: black;
+    background-color: #000000;
     transform: translateX(-50%) translateY(-50%) scale(0.95);
     display: -webkit-box;
     display: -ms-flexbox;
@@ -28,7 +28,7 @@
 }
 
 .card .poster{
-    height: 490px;
+    height: 550px;
     overflow: hidden;
 }
 
@@ -38,6 +38,7 @@
 
 .card .content{
     color: #cecece;
+    background-color: #093b55;
     text-align: center;
     padding: 5px 10px;
     font-weight: 600;
@@ -59,10 +60,11 @@
 .card .content .title{
     position: absolute;
     bottom: 20px;
-    background: #000000a6;
+    background-color: #093b55;
     padding: 10px 5px;
     width: 100%;
     left: 0;
+    border-top: 2px solid #092e42;
 }
 .card .info{
     display: -webkit-box;
@@ -89,6 +91,7 @@
     position: absolute;
     top: 0;
     height: 100%;
+    width: 100%;
     background: #000000b0;
     color: white;
     padding: 15px;

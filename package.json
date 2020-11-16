@@ -8,6 +8,7 @@
     "test": "react-scripts test"
   },
   "dependencies": {
+    "@capacitor/android": "2.4.1",
     "@capacitor/core": "2.4.1",
     "@ionic/core": "^5.0.0-rc.5",
     "@ionic/react": "^5.0.7",

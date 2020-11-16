@@ -40,6 +40,7 @@
     margin: 0 5px;
     height: 90%;
     height: calc(100% - 55px);
+    width: 100%;
 }
 
 .selected_board .card .button{
@@ -49,20 +50,23 @@
 }
 
 .selected_board .card .button.disliked{
-    background-color: #0b7a1d;
+    background-color: #324c36;
 }
 
 .selected_board .card .button.liked{
-    background-color: #bf0b0b;
+    background-color: #3a2626;
 }
 
 .selected_board .seen-btn{
     position: absolute;
     top: 0;
     right: 0;
-    width: 30px;
+    height: auto;
+    padding: 0 5px;
+    width: auto;
     background: #f9f9f940;
-    border-radius: 2px;
+    border-radius: 5px;
+    margin: 3px;
     display: none;
 }
 

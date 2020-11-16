@@ -113,6 +113,7 @@ ion-item.selected {
 }
 
 ion-menu .menu-avatar{
+  border: 1px solid #636363;
   position: absolute;
   left: 0;
   top: 10px;
@@ -120,4 +121,9 @@ ion-menu .menu-avatar{
 ion-menu .menu-list-header,
 ion-menu .menu-note{
   margin-left: 70px;
+}
+
+ion-menu .menu-list-header.no-name{
+  position: relative;
+  top: 10px;
 }

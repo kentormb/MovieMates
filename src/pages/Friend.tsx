@@ -19,7 +19,7 @@ import {getCurrentUser} from "../auth";
 
 const Friend: React.FC = () => {
   const { id } = useParams();
-  const [userData, getUserData] = useState({name: '', icon: ''});
+  const [userData, getUserData] = useState({name: '', username: '', icon: ''});
   const history = useHistory()
 
     function deleteFriendHandle(id: number) {
@@ -31,7 +31,7 @@ const Friend: React.FC = () => {
 
   useIonViewWillEnter(()=>{
       getFriendById(id).then((result)=>{
-          getUserData({name: result.result.name, icon: result.result.icon});
+          getUserData({name: result.result.name, username: result.result.username, icon: result.result.icon});
       })
   });
 
@@ -42,7 +42,7 @@ const Friend: React.FC = () => {
                   <IonButtons slot="start">
                       <IonBackButton />
                   </IonButtons>
-                  <IonTitle>{userData.name}</IonTitle>
+                  <IonTitle>{userData.name ? userData.name  : userData.username}</IonTitle>
                   <IonButton  slot="end" onClick={ () => { deleteFriendHandle(id) }} color="medium">
                       <IonIcon ios={trashSharp} md={trashOutline}/>
                   </IonButton>
