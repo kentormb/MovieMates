@@ -8,15 +8,11 @@ interface Options{
 
 export function getMovies(page: number = 1,
                           useId: string | number,
-                          friendId: string | number = null,
-                          groupId: string | number = null,
-                          movieStatus: number = 0,
-                          options: Options = {when:10 , what:1, cat:0}){
+                          cat: string = '',
+                          what: string = '1',
+                          when: string = '10'){
 
     const token = getToken();
-    const when = options.when;
-    const what = options.what;
-    const cat = options.cat;
     const url = 'http://marios.com.gr/movies/api.php?status=13&userid=' + useId + '&page=' + page + '&when=' + when + '&what=' + what + '&cat=' + cat + '&token=' + token;
     //console.log('get movies', url);
     return fetch(url)

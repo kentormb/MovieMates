@@ -161,7 +161,9 @@ const Menu: React.FC = () => {
         </IonList>
         <IonButton color="medium"
                    expand="block"
-                   onClick={ () => auth.signOut() }
+                   onClick={ () => auth.signOut().then(()=>{
+                     window.location.href = "/login"
+                   })}
         >Logout</IonButton>
         <IonPopover
             isOpen={qrImage}

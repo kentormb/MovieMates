@@ -3,6 +3,8 @@ import * as Hammer from 'hammerjs';
 import {IonLoading} from "@ionic/react";
 import {Card} from "./Card";
 import {getMovies, updateUsersMovies} from "./Api";
+import {StateProps} from '../store/reducer';
+import { useSelector } from "react-redux"
 import {getCurrentUser} from "../auth";
 //https://www.hackdoor.io/articles/8MNPqDpV/build-a-full-featured-tinder-like-carousel-in-vanilla-javascript
 
@@ -18,13 +20,20 @@ class Carousel {
     private nextCard: any;
     private page: number;
     private rootDispatcher: any;
+    private categories: any;
+    private orderBy: any;
+    private year: any;
 
-    constructor(element: Element | null, page, rootDispatcher: any = null) {
+    constructor(element: Element | null, page, rootDispatcher: any = null, categories: any = null, orderBy: any = null, year: any = null) {
 
         this.board = element;
         this.page = page;
 
         this.rootDispatcher = rootDispatcher;
+
+        this.categories = categories;
+        this.orderBy = orderBy;
+        this.year = year;
 
         // handle gestures
         this.handle();
@@ -180,7 +189,8 @@ class Carousel {
 
     push() {
         if(this.board){
-            getMovies(this.page, getCurrentUser().uid).then((results) => {
+            const cat = this.categories.filter((item)=>item.checked).map((item)=>item.id).join();
+            getMovies(this.page, getCurrentUser().uid, cat, this.orderBy, this.year).then((results) => {
                 try {
                     for (const [index, value] of  Object.entries(results)) {
                         const card = Card((+index*this.page),value);
@@ -223,27 +233,42 @@ interface Props{
     rootDispatcher: any;
 }
 
-
 const Swipper: React.FC<Props> = ({rootDispatcher}) => {
 
     const [isLoaded, setIsLoaded] = useState(false);
 
-    useEffect(() => {
-        getMovies(1, getCurrentUser().uid ).then((results) => {
-            setIsLoaded(true);
-            try {
-                let board = document.querySelector('#board');
-                for (const [index, value] of  Object.entries(results)) {
-                    board.append(Card(+index,value));
-                }
-                new Carousel(board,2, rootDispatcher);
-            }
-            catch (e) {
-                setIsLoaded(false);
-            }
+    const categories = useSelector<StateProps>((state: StateProps) => {
+      return state.categories
+    });
 
-        });
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    const orderBy = useSelector<StateProps>((state: StateProps) => {
+        return state.orderBy
+    });
+
+    const year = useSelector<StateProps>((state: StateProps) => {
+        return state.years
+    });
+
+    useEffect(() => {
+        if(categories.length > 0){
+            setIsLoaded(false);
+            const cat = categories.filter((item)=>item.checked).map((item)=>item.id).join();
+            getMovies(1, getCurrentUser().uid, cat, orderBy,year).then((results) => {
+                setIsLoaded(true);
+                try {
+                    let board = document.querySelector('#board');
+                    for (const [index, value] of  Object.entries(results)) {
+                        board.append(Card(+index,value));
+                    }
+                    new Carousel(board,2, rootDispatcher, categories, orderBy, year);
+                }
+                catch (e) {
+                    setIsLoaded(false);
+                }
+
+            });
+        }
+    }, [categories,orderBy,year]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!isLoaded) {
         return (<IonLoading isOpen/>);

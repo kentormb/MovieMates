@@ -3,7 +3,9 @@ import { Dispatch } from "redux"
 import { useDispatch, useSelector } from "react-redux"
 
 
+
 import {StateProps} from '../store/reducer';
+// import { useSelector } from "react-redux"
 // const cnt = useSelector<StateProps>((state: StateProps) => {
 //   return state.menu
 // });

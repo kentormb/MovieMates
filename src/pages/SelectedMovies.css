@@ -67,7 +67,6 @@
     background: #f9f9f940;
     border-radius: 5px;
     margin: 3px;
-    display: none;
 }
 
 .selected_board .seen-layer{
@@ -87,9 +86,6 @@
     top: 6px;
     left: 50%;
     margin-left: -15px;
-}
-.selected_board .card.dis-likes .seen-btn{
-    display: block;
 }
 
 .selected_board .card.dis-likes .seen-layer{
