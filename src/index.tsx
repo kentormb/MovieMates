@@ -32,6 +32,7 @@ import './theme/variables.css';
 const store = createStore(reducer)
 
 const { SplashScreen } = Plugins;
+
 ReactDOM.render(
     <Provider store={store}>
         <App />

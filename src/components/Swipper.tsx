@@ -110,7 +110,33 @@ class Carousel {
                     // scale up next card
                     if (this.nextCard) this.nextCard.style.transform = 'translateX(-50%) translateY(-50%) rotate(0deg) rotateY(0deg) scale(' + scale + ')'
 
-                    if (e.isFinal && this.board) {
+                    if(propX > 0 && e.direction === Hammer.DIRECTION_RIGHT){
+
+                        // @ts-ignore
+                        document.getElementsByClassName('left-slide')[0].style.opacity = 0
+                        const rs = document.getElementsByClassName('right-slide')
+                        let opacity  = (e.distance / (window.innerWidth/2));
+                        // @ts-ignore
+                        rs[0].style.opacity = opacity;
+                    }
+
+                    if(propX < 0 && e.direction === Hammer.DIRECTION_LEFT){
+
+                        // @ts-ignore
+                        document.getElementsByClassName('right-slide')[0].style.opacity = 0
+                        const ls = document.getElementsByClassName('left-slide')
+                        let opacity  = (e.distance / (window.innerWidth/2));
+                        // @ts-ignore
+                        ls[0].style.opacity = opacity;
+                    }
+
+
+                 if (e.isFinal && this.board) {
+
+                        // @ts-ignore
+                        document.getElementsByClassName('right-slide')[0].style.opacity = 0
+                        // @ts-ignore
+                        document.getElementsByClassName('left-slide')[0].style.opacity = 0
 
                         this.isPanning = false
 
@@ -121,6 +147,9 @@ class Carousel {
 
                         // check threshold and movement direction
                         if (propX > 0.25 && e.direction === Hammer.DIRECTION_RIGHT) {
+
+                            // @ts-ignore
+                            document.getElementsByClassName('right-slide')[0].style.opacity = 0
 
                             successful = true
                             // get right border position
@@ -135,6 +164,9 @@ class Carousel {
                         }
                         else if (propX < -0.25 && e.direction === Hammer.DIRECTION_LEFT) {
 
+                            // @ts-ignore
+                            document.getElementsByClassName('left-slide')[0].style.opacity = 0
+
                             successful = true
                             // get left border position
                             posX = - (this.board.clientWidth + this.topCard.clientWidth)
@@ -148,7 +180,7 @@ class Carousel {
                         }
 
                         if (successful) {
-
+                            console.log('success')
                             // throw card in the chosen direction
                             this.topCard.style.transform = 'translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg)'
 
@@ -274,7 +306,11 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
         return (<IonLoading isOpen/>);
     } else {
         return (
-            <div id="board"></div>
+            <>
+            <span className={"left-slide"} />
+            <div id="board"/>
+            <span className={"right-slide"} />
+            </>
         );
     }
 }

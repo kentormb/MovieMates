@@ -16,7 +16,7 @@ import {
     IonCard,
     IonCardHeader,
     IonCardTitle,
-    IonCardContent, IonRadioGroup, IonRadio, IonRange, IonToast
+    IonCardContent, IonRadioGroup, IonRadio, IonRange
 } from '@ionic/react';
 import React, {useState, useRef, useEffect} from 'react';
 import './Page.css';
@@ -30,10 +30,10 @@ import { Plugins } from '@capacitor/core';
 const Movies: React.FC = () => {
 
     const [showFilterModal, setShowFilterModal] = useState(false);
+    const [adult, setAdult] = useState(false);
     const [year, setYear] = useState(10);
     const [orderBy,setOrderBy] = useState(1);
     const [categories, setCategories] = useState(cats);
-    const [showAdultToast, setShowAdultToast] = useState(false);
     const pageRef = useRef<HTMLElement>(null);
     const { Storage } = Plugins;
 
@@ -41,6 +41,17 @@ const Movies: React.FC = () => {
     const rootDispatcher = new RootDispatcher(dispatch);
 
     const closeModal = () => setShowFilterModal(false);
+
+    const setAdultHandler = (value) =>{
+
+        if(value === 'on'){
+            setAdult(true)
+        }
+        else{
+            setAdult(false)
+        }
+
+    }
 
     const saveOptions = () => {
         rootDispatcher.updateCategories(categories.filter((item)=>item.checked))
@@ -115,8 +126,8 @@ const Movies: React.FC = () => {
                             <IonCardTitle>Adult content</IonCardTitle>
                             <IonToggle
                                 className={"floating-toggle"}
-                                checked={false}
-                                onIonChange={e => {setShowAdultToast(true)}}
+                                checked={adult}
+                                onIonChange={e => {setAdultHandler(e.detail.value)}}
                                 color="primary"
                             />
                         </IonCardHeader>
@@ -175,13 +186,6 @@ const Movies: React.FC = () => {
                         </IonCardContent>
                     </IonCard>
                 </IonContent>
-                <IonToast
-                    isOpen={showAdultToast}
-                    onDidDismiss={() => setShowAdultToast(false)}
-                    message="This is not ready yet, but it will be. ;)"
-                    duration={5000}
-                    color={'success'}
-                />
             </IonModal>
         </IonPage>
     );

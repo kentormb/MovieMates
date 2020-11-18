@@ -9,7 +9,7 @@ import {
   IonListHeader,
   IonMenu,
   IonMenuToggle,
-  IonNote, IonPopover,
+  IonNote, IonPopover, IonToggle,
 } from '@ionic/react';
 import React, {useEffect, useState} from 'react';
 import { useLocation } from 'react-router-dom';
@@ -33,6 +33,7 @@ import {getMenuCounts} from "./Api";
 import {getCurrentUser} from "../auth";
 import {RootDispatcher, StateProps} from '../store/reducer';
 import { useDispatch, useSelector } from "react-redux"
+import {Plugins} from "@capacitor/core";
 
 interface AppPage {
   url: string;
@@ -50,6 +51,18 @@ const Menu: React.FC = () => {
   const [likedCount, setLikedCount] = useState(-1)
   const [dislikedCount, setDisLikedCount] = useState(-1)
   const [qrImage, setQrImage] = useState(false)
+  const dispatch = useDispatch();
+  const rootDispatcher = new RootDispatcher(dispatch);
+  const { Storage } = Plugins;
+
+  const setDarkModeHandler = (value) =>{
+    document.body.classList.toggle('dark', value);
+    Storage.set({
+      key: 'darkMode',
+      value: JSON.stringify(value)
+    });
+    rootDispatcher.updateDarkMode(value)
+  }
 
   const appPages: AppPage[] = [
     {
@@ -93,17 +106,15 @@ const Menu: React.FC = () => {
       iosIcon: heartDislikeOutline,
       mdIcon: heartDislikeSharp,
       badge: dislikedCount
-    },
-    {
-      title: 'Account Settings',
-      url: '/my/account',
-      iosIcon: settingsOutline,
-      mdIcon: settingsSharp,
-      badge: -1
     }
+    // {
+    //   title: 'Account Settings',
+    //   url: '/my/account',
+    //   iosIcon: settingsOutline,
+    //   mdIcon: settingsSharp,
+    //   badge: -1
+    // }
   ];
-
-  const dispatch = useDispatch();
 
   const menu = useSelector<StateProps>((state: StateProps) => {
     return state.menu
@@ -113,10 +124,13 @@ const Menu: React.FC = () => {
     return state.user
   });
 
+  const darkMode = useSelector<StateProps>((state: StateProps) => {
+    return state.darkMode
+  });
+
   useEffect(()=>{
     const updateMenu = () => {
       getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number})=>{
-        const rootDispatcher = new RootDispatcher(dispatch);
         rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked})})
     }
     updateMenu();
@@ -158,6 +172,17 @@ const Menu: React.FC = () => {
               </IonMenuToggle>
             );
           })}
+        </IonList>
+        <IonList className={"menu-secondary-list"}>
+          <IonItem>
+            <IonLabel className={"mm-bold"}>Dark mode</IonLabel>
+            <IonToggle
+                className={"dark-mode-btn"}
+                checked={darkMode}
+                onIonChange={e => {setDarkModeHandler(e.detail.checked)}}
+                color="primary"
+            />
+          </IonItem>
         </IonList>
         <IonButton color="medium"
                    expand="block"

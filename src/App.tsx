@@ -6,10 +6,26 @@ import {IonApp, IonLoading, IonRouterOutlet} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 import {AuthContext, useAuthInit} from './auth';
+import {RootDispatcher} from './store/reducer';
+import { useDispatch } from "react-redux"
+import {Plugins} from "@capacitor/core";
+
 
 const App: React.FC = () => {
 
   const {loading,auth} = useAuthInit();
+
+  const { Storage } = Plugins;
+
+  const dispatch = useDispatch();
+  const rootDispatcher = new RootDispatcher(dispatch);
+
+  Storage.get({ key: 'darkMode' }).then((result)=>{
+    if(result.value){
+      rootDispatcher.updateDarkMode(JSON.parse(result.value))
+      document.body.classList.toggle('dark', JSON.parse(result.value));
+    }
+  });
 
   const backButton = (ev) => {
     ev.preventDefault()

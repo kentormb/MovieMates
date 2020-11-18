@@ -17,8 +17,8 @@ export enum ActionType {
     UPDATE_CATEGORIES = 'UPDATE_CATEGORIES',
     UPDATE_ORDERBY = 'UPDATE_ORDERBY',
     UPDATE_YEARS = 'UPDATE_YEARS',
-    UPDATE_ADULT = 'UPDATE_ADULT'
-
+    UPDATE_ADULT = 'UPDATE_ADULT',
+    UPDATE_DARKM_MODE = 'UPDATE_DARKM_MODE'
 }
 
 export const initialState = {
@@ -28,7 +28,8 @@ export const initialState = {
     categories: [],
     orderBy: 1,
     years: 10,
-    adult: 0
+    adult: 0,
+    darkMode: false
 
 }
 
@@ -39,7 +40,8 @@ export interface StateProps {
     categories: [],
     orderBy: number,
     years: number,
-    adult: number
+    adult: number,
+    darkMode: boolean
 }
 
 interface DispatchAction extends Action<ActionType> {
@@ -129,6 +131,11 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 adult: action.payload
             }
+        case ActionType.UPDATE_DARKM_MODE:
+            return {
+                ...state,
+                darkMode: action.payload
+            }
     }
     return state;
 }
@@ -151,6 +158,7 @@ export class RootDispatcher {
     updateOrderBy = (payload) => this.dispatch({type: ActionType.UPDATE_ORDERBY, payload: payload});
     updateYears = (payload) => this.dispatch({type: ActionType.UPDATE_YEARS, payload: payload});
     updateAdults = (payload) => this.dispatch({type: ActionType.UPDATE_ADULT, payload: payload});
+    updateDarkMode = (payload) => this.dispatch({type: ActionType.UPDATE_DARKM_MODE, payload: payload});
 }
 
 export default reducer;
