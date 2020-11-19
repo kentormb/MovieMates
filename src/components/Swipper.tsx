@@ -4,8 +4,9 @@ import {IonLoading} from "@ionic/react";
 import {Card} from "./Card";
 import {getMovies, updateUsersMovies} from "./Api";
 import {StateProps} from '../store/reducer';
-import { useSelector } from "react-redux"
+import {useSelector} from "react-redux"
 import {getCurrentUser} from "../auth";
+
 //https://www.hackdoor.io/articles/8MNPqDpV/build-a-full-featured-tinder-like-carousel-in-vanilla-javascript
 
 class Carousel {
@@ -23,6 +24,9 @@ class Carousel {
     private categories: any;
     private orderBy: any;
     private year: any;
+    private leftslide: any;
+    private rightslide: any;
+    private slideWidth: number;
 
     constructor(element: Element | null, page, rootDispatcher: any = null, categories: any = null, orderBy: any = null, year: any = null) {
 
@@ -35,6 +39,8 @@ class Carousel {
         this.orderBy = orderBy;
         this.year = year;
 
+        this.slideWidth = window.innerWidth / 2;
+
         // handle gestures
         this.handle();
     }
@@ -44,6 +50,9 @@ class Carousel {
         if(this.board){
             // list all cards
             this.cards = this.board.querySelectorAll(".card");
+
+            this.leftslide = document.getElementById('left-slide')
+            this.rightslide = document.getElementById('right-slide')
 
             // get top card
             this.topCard = this.cards[this.cards.length - 1];
@@ -111,32 +120,19 @@ class Carousel {
                     if (this.nextCard) this.nextCard.style.transform = 'translateX(-50%) translateY(-50%) rotate(0deg) rotateY(0deg) scale(' + scale + ')'
 
                     if(propX > 0 && e.direction === Hammer.DIRECTION_RIGHT){
-
-                        // @ts-ignore
-                        document.getElementsByClassName('left-slide')[0].style.opacity = 0
-                        const rs = document.getElementsByClassName('right-slide')
-                        let opacity  = (e.distance / (window.innerWidth/2));
-                        // @ts-ignore
-                        rs[0].style.opacity = opacity;
+                        this.leftslide.style.opacity = 0
+                        this.rightslide.style.opacity = e.distance / this.slideWidth;
                     }
 
                     if(propX < 0 && e.direction === Hammer.DIRECTION_LEFT){
-
-                        // @ts-ignore
-                        document.getElementsByClassName('right-slide')[0].style.opacity = 0
-                        const ls = document.getElementsByClassName('left-slide')
-                        let opacity  = (e.distance / (window.innerWidth/2));
-                        // @ts-ignore
-                        ls[0].style.opacity = opacity;
+                        this.rightslide.style.opacity = 0
+                        this.leftslide.style.opacity =  e.distance / this.slideWidth;
                     }
-
 
                  if (e.isFinal && this.board) {
 
-                        // @ts-ignore
-                        document.getElementsByClassName('right-slide')[0].style.opacity = 0
-                        // @ts-ignore
-                        document.getElementsByClassName('left-slide')[0].style.opacity = 0
+                        this.rightslide.style.opacity = 0
+                        this.leftslide.style.opacity = 0
 
                         this.isPanning = false
 
@@ -180,7 +176,7 @@ class Carousel {
                         }
 
                         if (successful) {
-                            console.log('success')
+
                             // throw card in the chosen direction
                             this.topCard.style.transform = 'translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg)'
 
@@ -194,7 +190,6 @@ class Carousel {
                                     let  cardsleft = this.board.getElementsByClassName('card').length;
                                     if(cardsleft === 15) {
                                         this.push()
-
                                     }
                                     // handle gestures on new top card
                                     this.handle()
@@ -307,9 +302,9 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
     } else {
         return (
             <>
-            <span className={"left-slide"} />
+            <span id="left-slide" className={"left-slide"} />
             <div id="board"/>
-            <span className={"right-slide"} />
+            <span id="right-slide" className={"right-slide"} />
             </>
         );
     }

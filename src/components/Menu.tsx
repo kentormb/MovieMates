@@ -24,8 +24,7 @@ import {
   heartOutline,
   heartDislikeSharp,
   heartDislikeOutline,
-  settingsOutline,
-  settingsSharp, qrCodeSharp, ribbonOutline, ribbonSharp
+  qrCodeSharp, ribbonOutline, ribbonSharp, settingsOutline, settingsSharp
 } from 'ionicons/icons';
 import './Menu.css';
 import {auth} from '../firebase';
@@ -106,14 +105,14 @@ const Menu: React.FC = () => {
       iosIcon: heartDislikeOutline,
       mdIcon: heartDislikeSharp,
       badge: dislikedCount
+    },
+    {
+      title: 'Account Settings',
+      url: '/my/account',
+      iosIcon: settingsOutline,
+      mdIcon: settingsSharp,
+      badge: -1
     }
-    // {
-    //   title: 'Account Settings',
-    //   url: '/my/account',
-    //   iosIcon: settingsOutline,
-    //   mdIcon: settingsSharp,
-    //   badge: -1
-    // }
   ];
 
   const menu = useSelector<StateProps>((state: StateProps) => {
@@ -134,7 +133,7 @@ const Menu: React.FC = () => {
         rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked})})
     }
     updateMenu();
-  },[dispatch]);
+  },[dispatch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setFriendsCount(menu.friends)
