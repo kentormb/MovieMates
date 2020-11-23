@@ -5,35 +5,46 @@ import Friend from './pages/Friend';
 import Groups from './pages/Groups';
 import Friends from "./pages/Friends";
 import AccountSettings from './pages/AccountSettings';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {IonRouterOutlet, IonSplitPane} from '@ionic/react';
 import { Redirect, Route } from 'react-router-dom';
-import {useAuth} from "./auth";
+import {getCurrentUser, useAuth} from "./auth";
 import Top10 from "./pages/Top10";
-// import { Dispatch } from "redux"
-// import { useDispatch, useSelector } from "react-redux"
-// import {StateProps} from './store/reducer';
+import {RootDispatcher, StateProps} from './store/reducer';
+import { useDispatch, useSelector } from "react-redux"
 
 const App: React.FC = () => {
 
     const loggedIn = useAuth();
+    const dispatch = useDispatch();
+    const rootDispatcher = new RootDispatcher(dispatch);
+
+    const indicators = useSelector<StateProps>((state: StateProps) => {
+        return state.indicators
+    });
 
 
-    // const cnt = useSelector<StateProps>((state: StateProps) => {
-    //   return state
-    // });
-    //
-    // const dispatch: Dispatch<any> = useDispatch()
-    //
-    // const updateMenu = React.useCallback(
-    //     () => dispatch({type: 'UPDATE_MENU', payload: {disliked: 1, friends: 2, liked: 3}}),
-    //     []
-    // )
-    //
-    // let int =  setInterval(() => {
-    //   console.log("Hello", cnt);
-    //   //updateMenu()
-    //   }, 10000);
+    useEffect(()=>{
+
+        const socket = new WebSocket('ws://138.197.181.62:8080/' + getCurrentUser().uid);
+        let st = false;
+        // socket.onopen = function() {
+        //     console.log('Opened connection');
+        // }
+        socket.onmessage = function(event) {
+            const result = JSON.parse(event.data).result;
+            if(result.menu && !st){
+                st = true
+                rootDispatcher.updateIndicators(result)
+            }
+            else if(!result.menu && st){
+                st = false
+                rootDispatcher.updateIndicators(result)
+            }
+        }
+
+    },[]); // eslint-disable-line react-hooks/exhaustive-deps
+
 
     if(!loggedIn.loggedIn){
     return <Redirect to="/register"/>
@@ -41,6 +52,7 @@ const App: React.FC = () => {
     return (
       <IonSplitPane contentId="main">
         <Menu />
+        { indicators.menu ? <span className={"mm-indicator"} /> : '' }
         <IonRouterOutlet id="main">
             <Route path="/my/movies/" component={Movies} exact />
             <Route path="/my/movies/view/:status" component={MyMovies} exact />

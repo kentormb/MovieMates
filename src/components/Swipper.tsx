@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from "react";
 import * as Hammer from 'hammerjs';
-import {IonLoading} from "@ionic/react";
+import {IonLoading, IonToast} from "@ionic/react";
 import {Card} from "./Card";
-import {getMovies, updateUsersMovies} from "./Api";
+import {getFriends, getMovies, updateUsersMovies, suggestMovieToFriend} from "./Api";
 import {StateProps} from '../store/reducer';
 import {useSelector} from "react-redux"
 import {getCurrentUser} from "../auth";
 
 //https://www.hackdoor.io/articles/8MNPqDpV/build-a-full-featured-tinder-like-carousel-in-vanilla-javascript
+let topCardId = 0;
 
 class Carousel {
     private board: Element | null;
@@ -24,11 +25,12 @@ class Carousel {
     private categories: any;
     private orderBy: any;
     private year: any;
+    private adult: any;
     private leftslide: any;
     private rightslide: any;
     private slideWidth: number;
 
-    constructor(element: Element | null, page, rootDispatcher: any = null, categories: any = null, orderBy: any = null, year: any = null) {
+    constructor(element: Element | null, page, rootDispatcher: any = null, categories: any = null, orderBy: any = null, year: any = null, adult: any = null) {
 
         this.board = element;
         this.page = page;
@@ -38,6 +40,7 @@ class Carousel {
         this.categories = categories;
         this.orderBy = orderBy;
         this.year = year;
+        this.adult = adult;
 
         this.slideWidth = window.innerWidth / 2;
 
@@ -56,6 +59,10 @@ class Carousel {
 
             // get top card
             this.topCard = this.cards[this.cards.length - 1];
+
+            topCardId = this.topCard.getAttribute('key');
+            const li = [...document.getElementsByClassName("suggested")]
+            li.map((item)=>item.className = '')
 
             if (this.cards.length > 0) {
                 // listen for pan gesture on top card
@@ -217,7 +224,7 @@ class Carousel {
     push() {
         if(this.board){
             const cat = this.categories.filter((item)=>item.checked).map((item)=>item.id).join();
-            getMovies(this.page, getCurrentUser().uid, cat, this.orderBy, this.year).then((results) => {
+            getMovies(this.page, getCurrentUser().uid, cat, this.orderBy, this.year, this.adult).then((results) => {
                 try {
                     for (const [index, value] of  Object.entries(results)) {
                         const card = Card((+index*this.page),value);
@@ -263,31 +270,55 @@ interface Props{
 const Swipper: React.FC<Props> = ({rootDispatcher}) => {
 
     const [isLoaded, setIsLoaded] = useState(false);
+    const [friendList, setFriendList] = useState([]);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("You have already suggested this movie");
 
-    const categories = useSelector<StateProps>((state: StateProps) => {
-      return state.categories
+    const {categories, orderBy, year, adult} = useSelector<StateProps>((state: StateProps) => {
+      return state
     });
 
-    const orderBy = useSelector<StateProps>((state: StateProps) => {
-        return state.orderBy
-    });
+    const suggestMovie = (el, friendId) =>{
+        el.target.closest('li').className = "suggested"
+        suggestMovieToFriend(getCurrentUser().uid, topCardId, friendId).then((result)=>{
+            if(result.error === 6){
+                setToastMessage("You have already suggested this movie")
+                setShowToast(true)
+            }
 
-    const year = useSelector<StateProps>((state: StateProps) => {
-        return state.years
-    });
+        })
+    }
+
+    const showSuggestedFriends = () =>{
+        if(friendList.length === 0){
+            getFriends(getCurrentUser().uid,1).then((results)=>{
+                if(results.error === 0 && results.result.length > 0){
+                    setFriendList(results.result)
+                    rootDispatcher.updateFriends(results.result)
+                }
+                else{
+                    setToastMessage("You have no friends yet")
+                    setShowToast(true)
+                }
+            })
+        }
+        document.getElementById('suggest-container').classList.toggle('open')
+    }
+
+
 
     useEffect(() => {
         if(categories.length > 0){
             setIsLoaded(false);
             const cat = categories.filter((item)=>item.checked).map((item)=>item.id).join();
-            getMovies(1, getCurrentUser().uid, cat, orderBy,year).then((results) => {
+            getMovies(1, getCurrentUser().uid, cat, orderBy, year, adult).then((results) => {
                 setIsLoaded(true);
                 try {
                     let board = document.querySelector('#board');
                     for (const [index, value] of  Object.entries(results)) {
                         board.append(Card(+index,value));
                     }
-                    new Carousel(board,2, rootDispatcher, categories, orderBy, year);
+                    new Carousel(board,2, rootDispatcher, categories, orderBy, year, adult);
                 }
                 catch (e) {
                     setIsLoaded(false);
@@ -302,9 +333,30 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
     } else {
         return (
             <>
-            <span id="left-slide" className={"left-slide"} />
-            <div id="board"/>
-            <span id="right-slide" className={"right-slide"} />
+                <span id="left-slide" className={"left-slide"} />
+                <div id="board"/>
+                <div className={"suggest-container"} id={"suggest-container"}>
+                    <span className={"suggest-btn plus"} onClick={showSuggestedFriends}/>
+                    <div className={"suggest-friends-list"} id={"suggest-friends-list"}>
+                        <span className={"title"}>Suggest this movie to a friend</span>
+                        <ul>
+                        {friendList.map((item) =>
+                            <li key={item.id} onClick={(el) => suggestMovie(el, item.id)}>
+                                <img src={item.icon} alt=''/>
+                                <span>{item.name!=='' ? item.name : item.username}</span>
+                            </li>
+                        )}
+                        </ul>
+                    </div>
+                </div>
+                <span id="right-slide" className={"right-slide"} />
+                <IonToast
+                    isOpen={showToast}
+                    onDidDismiss={() => setShowToast(false)}
+                    message={toastMessage}
+                    duration={2500}
+                    color={'warning'}
+                />
             </>
         );
     }

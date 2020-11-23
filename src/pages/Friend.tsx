@@ -15,15 +15,20 @@ import {deleteFriend, getFriendById} from "../components/Api";
 import {trashOutline, trashSharp} from "ionicons/icons";
 import { useHistory } from 'react-router-dom';
 import {getCurrentUser} from "../auth";
+import {RootDispatcher} from "../store/reducer";
+import { useDispatch } from "react-redux"
 
 
 const Friend: React.FC = () => {
-  const { id } = useParams();
-  const [userData, getUserData] = useState({name: '', username: '', icon: ''});
-  const history = useHistory()
+    const { id } = useParams();
+    const [userData, getUserData] = useState({name: '', username: '', icon: ''});
+    const history = useHistory()
+    const dispatch = useDispatch();
+    const rootDispatcher = new RootDispatcher(dispatch);
 
     function deleteFriendHandle(id: number) {
         deleteFriend(getCurrentUser().uid, id).then(()=>{
+            rootDispatcher.decFriendsCount()
             history.goBack()
         })
 

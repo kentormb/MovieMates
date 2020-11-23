@@ -40,12 +40,12 @@ interface AppPage {
   mdIcon: string;
   title: string;
   badge: number;
+  indicator: number;
 }
 
 const Menu: React.FC = () => {
 
   const location = useLocation();
-  //const [ userInfo, setUserInfo ] = useState({username:'',name:'',photo:'',qr:''});
   const [friendsCount, setFriendsCount] = useState(-1)
   const [likedCount, setLikedCount] = useState(-1)
   const [dislikedCount, setDisLikedCount] = useState(-1)
@@ -62,6 +62,9 @@ const Menu: React.FC = () => {
     });
     rootDispatcher.updateDarkMode(value)
   }
+  const {menu, user, darkMode, indicators} = useSelector<StateProps>((state: StateProps) => {
+    return state
+  });
 
   const appPages: AppPage[] = [
     {
@@ -69,63 +72,58 @@ const Menu: React.FC = () => {
       url: '/my/movies',
       iosIcon: filmOutline,
       mdIcon: filmSharp,
-      badge: -1
+      badge: -1,
+      indicator: -1
     },
     {
       title: 'Friends',
       url: '/my/friends',
       iosIcon: peopleOutline,
       mdIcon: peopleSharp,
-      badge: friendsCount
+      badge: friendsCount,
+      indicator: indicators.friend_request
     },
     {
       title: 'Groups',
       url: '/my/groups',
       iosIcon: peopleCircleOutline,
       mdIcon: peopleCircleSharp,
-      badge: -1
+      badge: -1,
+      indicator: -1
     },
     {
       title: 'Top 10',
       url: '/my/top10',
       iosIcon: ribbonOutline,
       mdIcon: ribbonSharp,
-      badge: -1
+      badge: -1,
+      indicator: -1
     },
     {
       title: 'Liked movies',
       url: '/my/movies/view/liked',
       iosIcon: heartOutline,
       mdIcon: heartSharp,
-      badge: likedCount
+      badge: likedCount,
+      indicator: -1
     },
     {
       title: 'Disliked movies',
       url: '/my/movies/view/disliked',
       iosIcon: heartDislikeOutline,
       mdIcon: heartDislikeSharp,
-      badge: dislikedCount
+      badge: dislikedCount,
+      indicator: -1
     },
     {
       title: 'Account Settings',
       url: '/my/account',
       iosIcon: settingsOutline,
       mdIcon: settingsSharp,
-      badge: -1
+      badge: -1,
+      indicator: -1
     }
   ];
-
-  const menu = useSelector<StateProps>((state: StateProps) => {
-    return state.menu
-  });
-
-  const userInfo = useSelector<StateProps>((state: StateProps) => {
-    return state.user
-  });
-
-  const darkMode = useSelector<StateProps>((state: StateProps) => {
-    return state.darkMode
-  });
 
   useEffect(()=>{
     const updateMenu = () => {
@@ -147,10 +145,10 @@ const Menu: React.FC = () => {
         <IonList id="inbox-list">
 
           <IonAvatar className="menu-avatar">
-            <IonImg src={userInfo?.photo} alt="" />
+            <IonImg src={user?.photo} alt="" />
           </IonAvatar>
-          <IonListHeader className="menu-list-header">{userInfo?.username}</IonListHeader>
-          <IonNote className="menu-note">{userInfo?.name ? userInfo?.name : getCurrentUser().email }</IonNote>
+          <IonListHeader className="menu-list-header">{user?.username}</IonListHeader>
+          <IonNote className="menu-note">{user?.name ? user?.name : getCurrentUser().email }</IonNote>
           <IonButtons slot="end" className={"qr-img-btn"}>
             <IonButton onClick={() => {setQrImage(true)}}>
               <IonIcon icon={qrCodeSharp} slot="icon-only"/>
@@ -160,6 +158,7 @@ const Menu: React.FC = () => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
                 <IonItem className={location.pathname === appPage.url ? 'selected' : ''} routerLink={appPage.url} routerDirection="none" lines="none" detail={false}>
+                  { appPage.indicator > 0 ? <span className={"mm-indicator in-menu"} /> : '' }
                   <IonIcon slot="start" ios={appPage.iosIcon} md={appPage.mdIcon} />
                   <IonLabel>{appPage.title}</IonLabel>
                   {(()=>{
@@ -195,7 +194,7 @@ const Menu: React.FC = () => {
             cssClass='qr-img-container'
             onDidDismiss={e => {setQrImage(false)}}
         >
-          <IonImg src={userInfo?.qr} alt="" />
+          <IonImg src={user?.qr} alt="" />
           <IonButton expand="full" onClick={() => {setQrImage(false)}}>Close</IonButton>
         </IonPopover>
 

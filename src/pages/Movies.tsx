@@ -30,7 +30,7 @@ import { Plugins } from '@capacitor/core';
 const Movies: React.FC = () => {
 
     const [showFilterModal, setShowFilterModal] = useState(false);
-    const [adult, setAdult] = useState(false);
+    const [adult, setAdult] = useState(0);
     const [year, setYear] = useState(10);
     const [orderBy,setOrderBy] = useState(1);
     const [categories, setCategories] = useState(cats);
@@ -44,11 +44,11 @@ const Movies: React.FC = () => {
 
     const setAdultHandler = (value) =>{
 
-        if(value === 'on'){
-            setAdult(true)
+        if(value){
+            setAdult(1)
         }
         else{
-            setAdult(false)
+            setAdult(0)
         }
 
     }
@@ -57,6 +57,8 @@ const Movies: React.FC = () => {
         rootDispatcher.updateCategories(categories.filter((item)=>item.checked))
         rootDispatcher.updateOrderBy(orderBy)
         rootDispatcher.updateYears(year)
+        rootDispatcher.updateAdults(adult)
+        console.log('save',adult)
         Storage.set({
             key: 'categories',
             value: JSON.stringify(categories)
@@ -70,7 +72,7 @@ const Movies: React.FC = () => {
         setCategories(cat)
     };
 
-    useEffect((()=>{
+    useEffect(()=>{
         Storage.get({ key: 'categories' }).then((result)=>{
             if(result.value){
                 setCategories( JSON.parse(result.value))
@@ -80,7 +82,7 @@ const Movies: React.FC = () => {
                 rootDispatcher.updateCategories(categories.filter((item)=>item.checked))
             }
         });
-    }),[]); // eslint-disable-line react-hooks/exhaustive-deps
+    },[]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <IonPage>
@@ -126,8 +128,8 @@ const Movies: React.FC = () => {
                             <IonCardTitle>Adult content</IonCardTitle>
                             <IonToggle
                                 className={"floating-toggle"}
-                                checked={adult}
-                                onIonChange={e => {setAdultHandler(e.detail.value)}}
+                                checked={!!adult}
+                                onIonChange={e => {setAdultHandler(e.detail.checked)}}
                                 color="primary"
                             />
                         </IonCardHeader>

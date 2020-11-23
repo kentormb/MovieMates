@@ -31,9 +31,11 @@ import React, {useEffect, useRef, useState} from 'react';
 import './Page.css';
 import {add, trashOutline, trashSharp, qrCodeSharp} from "ionicons/icons";
 import {getCurrentUser} from "../auth";
-import {addFriend, searchFriend, getFriends, acceptFriendRequest, deleteFriend} from '../components/Api'
+import {addFriend, searchFriend, getFriends, acceptFriendRequest, deleteFriend, getMenuCounts} from '../components/Api'
 import { RefresherEventDetail } from '@ionic/core';
 import QrReader from 'react-qr-reader';
+import {RootDispatcher} from "../store/reducer";
+import { useDispatch } from "react-redux"
 // https://morioh.com/p/9845cd2a2b19
 
 const Friends: React.FC = () => {
@@ -49,6 +51,8 @@ const Friends: React.FC = () => {
   const [value, setValue] = useState("0");
   const [qrScanner, setQrScanner] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const dispatch = useDispatch();
+  const rootDispatcher = new RootDispatcher(dispatch);
 
   function dismissSearchModal(){
     setShowModal(false);
@@ -63,13 +67,14 @@ const Friends: React.FC = () => {
       if(result.error === 0){
         setFriendList(friendList.concat(reqFriendList.filter(item => item.id === key )))
         setReqFriendList(reqFriendList.filter(item => item.id !== key))
+        rootDispatcher.incFriendsCount()
       }
     })
   }
 
   function deleteFriendHandle(id: number, key: number) {
     deleteFriend(getCurrentUser().uid, id).then(()=>{
-
+      rootDispatcher.decFriendsCount()
     })
   }
 
@@ -100,6 +105,7 @@ const Friends: React.FC = () => {
       if(results.error === 0){
         setFriendList(results.result.filter((item)=>item.status===1))
         setReqFriendList(results.result.filter((item)=>item.status===0))
+        rootDispatcher.updateFriends(results.result.filter((item)=>item.status===1))
       }
       else{
         setFriendList([])
@@ -123,6 +129,8 @@ const Friends: React.FC = () => {
 
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     getUserFriends().then(()=>{
+      getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number})=>{
+        rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked})})
       event.detail.complete()
     })
   }

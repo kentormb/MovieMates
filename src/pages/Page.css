@@ -233,3 +233,145 @@ body.dark .mm-cat-img{
 body.dark .card{
     box-shadow: 0px 4px 4px 0px #051f2dba;
 }
+
+.mm-indicator{
+    position: absolute;
+    display: block;
+    width: 13px;
+    height: 13px;
+    background: red;
+    z-index: 1;
+    top: 17px;
+    left: 33px;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+}
+
+.mm-indicator.in-menu{
+    right: 10px;
+    top: 6px;
+    left: auto;
+}
+
+body.dark .mm-indicator {
+    border: 3px solid #082331;
+}
+
+.suggest-container{
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: #208419;
+    z-index: 9999;
+    top: 82px;
+    right: 5px;
+    border-radius: 50%;
+    box-shadow: 0px 3px 4px black;
+}
+
+.suggest-container .plus{
+    --t: 2px;
+    --l: 40px;
+    --s: 10px;
+    --c1: #ffffff;
+    --c2: #208419;
+    display: inline-block;
+    width: var(--l);
+    height: var(--l);
+    padding: var(--s);
+    box-sizing: border-box;
+    background: linear-gradient(var(--c1),var(--c1)) content-box, linear-gradient(var(--c1),var(--c1)) content-box, var(--c2);
+    background-position: center;
+    background-size: 100% var(--t),var(--t) 100%;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    transition: 0.3s ease-in-out;
+    position: relative;
+    z-index: 2;
+}
+
+body.dark .suggest-container .plus{
+    --c1: #000000;
+}
+
+.suggest-container.open .plus{
+    transform: rotateZ(45deg);
+}
+
+.suggest-friends-list{
+    position: absolute;
+    top: 30px;
+    right: 0;
+    width: 300px;
+    z-index: 1;
+    display: none;
+}
+
+.suggest-container.open .suggest-friends-list{
+    display: block;
+}
+
+.suggest-friends-list .title{
+    position: absolute;
+    top: -31px;
+    display: block;
+    width: 300px;
+    padding-bottom: 3px;
+    font-size: 14px;
+}
+
+.suggest-container .suggest-friends-list .title:after{
+    content: "";
+    height: 1.8px;
+    width: 300px;
+    display: block;
+    background: #208419;
+    margin-top: 2px;
+}
+
+.suggest-friends-list ul{
+    position: absolute;
+    top: -20px;
+    right: 22px;
+    z-index: 1;
+    width: 320px;
+    max-height: 70vh;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.suggest-friends-list ul li{
+    background: #ffffff;
+    border: 1px solid #cdcdcd;
+    border-bottom: 1px solid #01070a;
+    margin-bottom: 2px;
+    padding: 13px 0 13px 48px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 1px 3px 4px black;
+}
+.suggest-friends-list ul li.suggested{
+    opacity: 0.8;
+}
+
+.suggest-friends-list ul li.suggested img{
+    opacity: 0.3;
+}
+
+body.dark .suggest-friends-list ul li {
+    background: #02121b;
+    border: none;
+    border-bottom: 1px solid #01070a;
+}
+
+.suggest-friends-list ul li img{
+    width: 35px;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.suggest-friends-list ul li span{
+    font-size: 13px;
+    white-space: nowrap;
+}

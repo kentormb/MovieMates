@@ -18,7 +18,9 @@ export enum ActionType {
     UPDATE_ORDERBY = 'UPDATE_ORDERBY',
     UPDATE_YEARS = 'UPDATE_YEARS',
     UPDATE_ADULT = 'UPDATE_ADULT',
-    UPDATE_DARKM_MODE = 'UPDATE_DARKM_MODE'
+    UPDATE_DARKM_MODE = 'UPDATE_DARKM_MODE',
+    UPDATE_INDICATORS = 'UPDATE_INDICATORS',
+    UPDATE_INDICATOR_MENU = 'UPDATE_INDICATOR_MENU'
 }
 
 export const initialState = {
@@ -29,7 +31,8 @@ export const initialState = {
     orderBy: 1,
     years: 10,
     adult: 0,
-    darkMode: false
+    darkMode: false,
+    indicators : {menu: false, friend_request: 0}
 
 }
 
@@ -41,7 +44,8 @@ export interface StateProps {
     orderBy: number,
     years: number,
     adult: number,
-    darkMode: boolean
+    darkMode: boolean,
+    indicators : {menu: boolean, friend_request: number}
 }
 
 interface DispatchAction extends Action<ActionType> {
@@ -136,6 +140,16 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 darkMode: action.payload
             }
+        case ActionType.UPDATE_INDICATORS:
+            return {
+                ...state,
+                indicators: action.payload
+            }
+        case ActionType.UPDATE_INDICATOR_MENU:
+            return {
+                ...state,
+                indicators: {menu: action.payload, friend_request: state.indicators.friend_request}
+            }
     }
     return state;
 }
@@ -149,6 +163,8 @@ export class RootDispatcher {
     }
 
     updateMenu = (payload) => this.dispatch({type: ActionType.UPDATE_MENU, payload: payload});
+    incFriendsCount = () =>  this.dispatch({type: ActionType.UPDATE_MENU_FRIENDS_INC, payload: {}});
+    decFriendsCount = () =>  this.dispatch({type: ActionType.UPDATE_MENU_FRIENDS_DEC, payload: {}});
     incLiked = () => this.dispatch({type: ActionType.UPDATE_MENU_LIKES_INC, payload: {}});
     decLiked = () => this.dispatch({type: ActionType.UPDATE_MENU_LIKES_DEC, payload: {}});
     incDisLiked = () => this.dispatch({type: ActionType.UPDATE_MENU_DISLIKES_INC, payload: {}});
@@ -159,6 +175,9 @@ export class RootDispatcher {
     updateYears = (payload) => this.dispatch({type: ActionType.UPDATE_YEARS, payload: payload});
     updateAdults = (payload) => this.dispatch({type: ActionType.UPDATE_ADULT, payload: payload});
     updateDarkMode = (payload) => this.dispatch({type: ActionType.UPDATE_DARKM_MODE, payload: payload});
+    updateIndicators = (payload) => this.dispatch({type: ActionType.UPDATE_INDICATORS, payload: payload});
+    updateIndicatorsMenu = (payload) => this.dispatch({type: ActionType.UPDATE_INDICATOR_MENU, payload: payload});
+    updateFriends = (payload) => this.dispatch({type: ActionType.UPDATE_FRIENDS, payload: payload});
 }
 
 export default reducer;
