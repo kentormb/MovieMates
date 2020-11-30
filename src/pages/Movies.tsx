@@ -58,7 +58,6 @@ const Movies: React.FC = () => {
         rootDispatcher.updateOrderBy(orderBy)
         rootDispatcher.updateYears(year)
         rootDispatcher.updateAdults(adult)
-        console.log('save',adult)
         Storage.set({
             key: 'categories',
             value: JSON.stringify(categories)

@@ -128,7 +128,10 @@ const Menu: React.FC = () => {
   useEffect(()=>{
     const updateMenu = () => {
       getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number})=>{
-        rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked})})
+        if(mc){
+          rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked})
+        }
+      })
     }
     updateMenu();
   },[dispatch]); // eslint-disable-line react-hooks/exhaustive-deps

@@ -29,6 +29,7 @@ class Carousel {
     private leftslide: any;
     private rightslide: any;
     private slideWidth: number;
+    private initSuggestionBtn: boolean;
 
     constructor(element: Element | null, page, rootDispatcher: any = null, categories: any = null, orderBy: any = null, year: any = null, adult: any = null) {
 
@@ -44,6 +45,8 @@ class Carousel {
 
         this.slideWidth = window.innerWidth / 2;
 
+        this.initSuggestionBtn = true;
+
         // handle gestures
         this.handle();
     }
@@ -51,8 +54,20 @@ class Carousel {
     handle() {
 
         if(this.board){
+
             // list all cards
             this.cards = this.board.querySelectorAll(".card");
+
+            if(this.initSuggestionBtn){
+                const sug = document.getElementById('suggest-container');
+                if(sug){
+                    const card0 = this.cards[0].getBoundingClientRect();
+                    sug.style.top = (card0.top - 20) +'px'
+                    sug.style.left = (card0.right - 20) +'px'
+                    console.log(this.initSuggestionBtn)
+                    this.initSuggestionBtn = false;
+                }
+            }
 
             this.leftslide = document.getElementById('left-slide')
             this.rightslide = document.getElementById('right-slide')
@@ -290,19 +305,10 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
     }
 
     const showSuggestedFriends = () =>{
-        if(friendList.length === 0){
-            getFriends(getCurrentUser().uid,1).then((results)=>{
-                if(results.error === 0 && results.result.length > 0){
-                    setFriendList(results.result)
-                    rootDispatcher.updateFriends(results.result)
-                }
-                else{
-                    setToastMessage("You have no friends yet")
-                    setShowToast(true)
-                }
-            })
+        if(document.getElementById('suggest-container')){
+            document.getElementById('suggest-container').classList.toggle('open')
         }
-        document.getElementById('suggest-container').classList.toggle('open')
+
     }
 
 
@@ -326,6 +332,14 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
 
             });
         }
+        if(friendList.length === 0){
+            getFriends(getCurrentUser().uid,1).then((results)=>{
+                if(results && results.error === 0 && results.result.length > 0){
+                    setFriendList(results.result)
+                    rootDispatcher.updateFriends(results.result)
+                }
+            })
+        }
     }, [categories,orderBy,year]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!isLoaded) {
@@ -335,20 +349,22 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
             <>
                 <span id="left-slide" className={"left-slide"} />
                 <div id="board"/>
-                <div className={"suggest-container"} id={"suggest-container"}>
-                    <span className={"suggest-btn plus"} onClick={showSuggestedFriends}/>
-                    <div className={"suggest-friends-list"} id={"suggest-friends-list"}>
-                        <span className={"title"}>Suggest this movie to a friend</span>
-                        <ul>
-                        {friendList.map((item) =>
-                            <li key={item.id} onClick={(el) => suggestMovie(el, item.id)}>
-                                <img src={item.icon} alt=''/>
-                                <span>{item.name!=='' ? item.name : item.username}</span>
-                            </li>
-                        )}
-                        </ul>
+                {friendList.length > 0 ?
+                    <div className={"suggest-container"} id={"suggest-container"}>
+                        <span className={"suggest-btn plus"} onClick={showSuggestedFriends}/>
+                        <div className={"suggest-friends-list"} id={"suggest-friends-list"}>
+                            <span className={"title"}>Suggest this movie to a friend</span>
+                            <ul>
+                            {friendList.map((item) =>
+                                <li key={item.id} onClick={(el) => suggestMovie(el, item.id)}>
+                                    <img src={item.icon} alt=''/>
+                                    <span>{item.name!=='' ? item.name : item.username}</span>
+                                </li>
+                            )}
+                            </ul>
+                        </div>
                     </div>
-                </div>
+                    : '' }
                 <span id="right-slide" className={"right-slide"} />
                 <IonToast
                     isOpen={showToast}
