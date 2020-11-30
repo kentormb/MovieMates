@@ -3,7 +3,10 @@ export function Card(index,result,cb = null){
     const date = new Date(result.releaseDate);
 
     const card = document.createElement('div');
-    card.setAttribute('class','card');
+    result?.seen === 1 ?
+        card.setAttribute('class','card seen') :
+        card.setAttribute('class','card');
+
     card.setAttribute('key',result.movieId);
 
     const poster = document.createElement('div');
@@ -11,7 +14,7 @@ export function Card(index,result,cb = null){
     card.append(poster);
 
     const img = document.createElement('img');
-    img.src = 'https://image.tmdb.org/t/p/w400/' + result.poster;
+    img.src = 'https://image.tmdb.org/t/p/w400' + result.poster;
     poster.append(img);
 
     if(result.seen !== undefined){

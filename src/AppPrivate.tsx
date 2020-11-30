@@ -5,45 +5,45 @@ import Friend from './pages/Friend';
 import Groups from './pages/Groups';
 import Friends from "./pages/Friends";
 import AccountSettings from './pages/AccountSettings';
-import React, {useEffect} from 'react';
-import {IonRouterOutlet, IonSplitPane} from '@ionic/react';
+import React from 'react';
+import { IonRouterOutlet, IonSplitPane } from '@ionic/react';
 import { Redirect, Route } from 'react-router-dom';
-import {getCurrentUser, useAuth} from "./auth";
+import { useAuth } from "./auth";
 import Top10 from "./pages/Top10";
-import {RootDispatcher, StateProps} from './store/reducer';
-import { useDispatch, useSelector } from "react-redux"
+import { StateProps } from './store/reducer';
+import { useSelector } from "react-redux"
 
 const App: React.FC = () => {
 
     const loggedIn = useAuth();
-    const dispatch = useDispatch();
-    const rootDispatcher = new RootDispatcher(dispatch);
+    //const dispatch = useDispatch();
+    //const rootDispatcher = new RootDispatcher(dispatch);
 
     const indicators = useSelector<StateProps>((state: StateProps) => {
         return state.indicators
     });
 
 
-    useEffect(()=>{
-
-        const socket = new WebSocket('ws://138.197.181.62:8080/' + getCurrentUser().uid);
-        let st = false;
-        // socket.onopen = function() {
-        //     console.log('Opened connection');
-        // }
-        socket.onmessage = function(event) {
-            const result = JSON.parse(event.data).result;
-            if(result.menu && !st){
-                st = true
-                rootDispatcher.updateIndicators(result)
-            }
-            else if(!result.menu && st){
-                st = false
-                rootDispatcher.updateIndicators(result)
-            }
-        }
-
-    },[]); // eslint-disable-line react-hooks/exhaustive-deps
+    // useEffect(()=>{
+    //
+    //     const socket = new WebSocket('ws://138.197.181.62:8080/' + getCurrentUser().uid);
+    //     let st = false;
+    //     // socket.onopen = function() {
+    //     //     console.log('Opened connection');
+    //     // }
+    //     socket.onmessage = function(event) {
+    //         const result = JSON.parse(event.data).result;
+    //         if(result.menu && !st){
+    //             st = true
+    //             rootDispatcher.updateIndicators(result)
+    //         }
+    //         else if(!result.menu && st){
+    //             st = false
+    //             rootDispatcher.updateIndicators(result)
+    //         }
+    //     }
+    //
+    // },[]); // eslint-disable-line react-hooks/exhaustive-deps
 
 
     if(!loggedIn.loggedIn){

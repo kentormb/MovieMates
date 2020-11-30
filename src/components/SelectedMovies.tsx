@@ -1,5 +1,13 @@
 import React, {useEffect, useState} from "react";
-import {IonContent, IonLoading, IonRefresher, IonRefresherContent} from "@ionic/react";
+import {
+    IonContent,
+    IonLoading,
+    IonRefresher,
+    IonRefresherContent,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
+    IonItem, IonLabel, IonToggle
+} from "@ionic/react";
 import {Card} from "./Card";
 import {getUsersMovies, seenThisMovie, updateUsersMovies} from "./Api";
 import {getCurrentUser} from "../auth";
@@ -16,13 +24,30 @@ interface Prop{
 const SelectedMovies: React.FC<Prop> = ({status}) => {
 
     const [isLoaded, setIsLoaded] = useState(false);
+    const [pageLikes, setPageLikes] = useState(1);
+    const [pageDisLikes, setPageDisLikes] = useState(1);
+    const [seenLikes, setSeenLikes] = useState(true);
+    const [seenDisLikes, setSeenDisLikes] = useState(true);
     const dispatch = useDispatch();
     const rootDispatcher = new RootDispatcher(dispatch);
+
+    const setWatched = (e) => {
+        status === 'liked' ? setSeenLikes(e) : setSeenDisLikes(e);
+    }
+
+    async function loadMoreMovies(e){
+        const page = status === 'liked' ? pageLikes :pageDisLikes;
+        getMovies(page).then(()=>{
+            (e.target as HTMLIonInfiniteScrollElement).complete()
+            status === 'liked' ? setPageLikes(page+1) : setPageDisLikes(page+1);
+        })
+    }
 
     function seenThis(mid,status){
         seenThisMovie(getCurrentUser().uid, mid, status).then(()=>{
             if(status === 1){
                 const c = document.querySelector('[key="'+mid+'"]');
+                c.className = 'card dis-likes seen';
                 const b = c.getElementsByClassName('seen-btn');
                 c.removeChild(b[0]);
                 const p = c.getElementsByClassName('poster');
@@ -39,6 +64,7 @@ const SelectedMovies: React.FC<Prop> = ({status}) => {
             }
             else{
                 const c = document.querySelector('[key="'+mid+'"]');
+                c.className = 'card dis-likes';
                 const p = c.getElementsByClassName('poster');
                 const l = c.getElementsByClassName('seen-layer');
                 p[0].removeChild(l[0]);
@@ -56,18 +82,19 @@ const SelectedMovies: React.FC<Prop> = ({status}) => {
         })
     }
 
-    async function getMovies(){
-
-        getUsersMovies(1, getCurrentUser().uid, status === 'liked' ? 1 : 0 ).then((results) => {
+    async function getMovies(page: number = 1){
+        const seen = status === 'liked' ? seenLikes : seenDisLikes;
+        getUsersMovies(page, getCurrentUser().uid, status === 'liked' ? 1 : 0, seen ).then((results) => {
             setIsLoaded(true);
             try {
                 let board = document.querySelector('#selected_board');
-                board.innerHTML = '';
+                //board.innerHTML = '';
                 for (const [index, value] of  Object.entries(results)) {
 
                     // @ts-ignore
                     const card = Card(+index,value,seenThis);
-                    card.className = 'card dis-likes';
+                    // @ts-ignore
+                    card.className = value.seen === 1 ? 'card dis-likes seen' : 'card dis-likes';
 
                     const action = document.createElement('div');
                     action.setAttribute('class','action');
@@ -116,14 +143,25 @@ const SelectedMovies: React.FC<Prop> = ({status}) => {
     }
 
     function doRefresh(event: CustomEvent<RefresherEventDetail>) {
+        document.querySelector('#selected_board').innerHTML = '';
+        status === 'liked' ? setPageLikes(1) : setPageDisLikes(1);
         getMovies().then(()=>{
             event.detail.complete()
+            status === 'liked' ? setPageLikes(2) : setPageDisLikes(2);
         })
     }
 
     useEffect(() => {
-        getMovies().then();
-    },[status]); // eslint-disable-line react-hooks/exhaustive-deps
+        setPageLikes(1);
+        setPageDisLikes(1);
+        if(document.querySelector('#selected_board')){
+            document.querySelector('#selected_board').innerHTML = '';
+        }
+        getMovies(1).then(()=>{
+            setPageLikes(2);
+            setPageDisLikes(2);
+        });
+    },[status, seenLikes, seenDisLikes]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!isLoaded) {
         return (<IonLoading isOpen/>);
@@ -133,7 +171,18 @@ const SelectedMovies: React.FC<Prop> = ({status}) => {
                 <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
                     <IonRefresherContent/>
                 </IonRefresher>
+                <IonItem>
+                    <IonLabel>Show watched movies</IonLabel>
+                    <IonToggle checked={ status === 'liked' ? seenLikes : seenDisLikes } onIonChange={e => setWatched(e.detail.checked)} />
+                </IonItem>
                 <div id="selected_board" className={"selected_board"}/>
+                <IonInfiniteScroll threshold="275px"
+                                   onIonInfinite={(e) => loadMoreMovies(e)}>
+                    <IonInfiniteScrollContent
+                        loadingSpinner="bubbles"
+                        loadingText="Loading more movies...">
+                    </IonInfiniteScrollContent>
+                </IonInfiniteScroll>
             </IonContent>
         );
     }

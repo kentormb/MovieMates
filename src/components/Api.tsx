@@ -24,10 +24,10 @@ export function getMovies(page: number = 1,
         .catch(error => console.warn(error));
 }
 
-export function getUsersMovies(page: number = 1, useId: string | number, mstatus: number){
+export function getUsersMovies(page: number = 1, useId: string | number, mstatus: number, seen: boolean){
 
     const token = getToken();
-    const url = 'http://marios.com.gr/movies/api/?status=14&userid=' + useId + '&page=' + page + '&mstatus=' + mstatus + '&token=' + token;
+    const url = 'http://marios.com.gr/movies/api/?status=14&userid=' + useId + '&page=' + page + '&limit=20&seen=' + +seen + '&mstatus=' + mstatus + '&token=' + token;
     //console.log('get user movies', url);
     return fetch(url)
         .then(res => res.json())
