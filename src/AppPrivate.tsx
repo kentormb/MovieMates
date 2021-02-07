@@ -5,19 +5,20 @@ import Friend from './pages/Friend';
 import Groups from './pages/Groups';
 import Friends from "./pages/Friends";
 import AccountSettings from './pages/AccountSettings';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { IonRouterOutlet, IonSplitPane } from '@ionic/react';
 import { Redirect, Route } from 'react-router-dom';
 import { useAuth } from "./auth";
 import Top10 from "./pages/Top10";
-import { StateProps } from './store/reducer';
-import { useSelector } from "react-redux"
+import { StateProps, RootDispatcher } from './store/reducer';
+import { useSelector, useDispatch } from "react-redux"
 
 const App: React.FC = () => {
 
     const loggedIn = useAuth();
-    //const dispatch = useDispatch();
-    //const rootDispatcher = new RootDispatcher(dispatch);
+    const [count, setCount] = useState(0);
+    const dispatch = useDispatch();
+    const rootDispatcher = new RootDispatcher(dispatch);
 
     const indicators = useSelector<StateProps>((state: StateProps) => {
         return state.indicators
@@ -45,9 +46,39 @@ const App: React.FC = () => {
     //
     // },[]); // eslint-disable-line react-hooks/exhaustive-deps
 
+    useInterval(() => {
+
+        console.log('timer', count);
+        setCount(count+1);
+
+    }, 60000); //count > 0 ? 10000 : null);
+
+    function useInterval(callback: any, delay:number|null) {
+        const savedCallback = useRef();
+
+        // Remember the latest function.
+        useEffect(() => {
+            savedCallback.current = callback;
+        }, [callback]);
+
+        // Set up the interval.
+        useEffect(() => {
+            function tick() {
+                // @ts-ignore
+                savedCallback.current();
+            }
+
+            if (delay !== null ) {
+                let id = setInterval(tick, delay);
+                return () => clearInterval(id);
+            }
+        }, [delay]);
+    }
+
 
     if(!loggedIn.loggedIn){
-    return <Redirect to="/register"/>
+        setCount(null)
+        return <Redirect to="/register"/>
     }
     return (
       <IonSplitPane contentId="main">

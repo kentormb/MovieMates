@@ -26,6 +26,11 @@ const App: React.FC = () => {
       document.body.classList.toggle('dark', JSON.parse(result.value));
     }
   });
+  Storage.get({ key: 'settings' }).then((result)=>{
+    if(result.value){
+      rootDispatcher.updateSettings(JSON.parse(result.value))
+    }
+  });
 
   const backButton = (ev) => {
     ev.preventDefault()

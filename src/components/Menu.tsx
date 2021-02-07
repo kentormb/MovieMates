@@ -20,11 +20,9 @@ import {
   peopleSharp,
   peopleCircleSharp,
   peopleCircleOutline,
-  heartSharp,
-  heartOutline,
-  heartDislikeSharp,
-  heartDislikeOutline,
-  qrCodeSharp, ribbonOutline, ribbonSharp, settingsOutline, settingsSharp
+  thumbsUpSharp,
+  thumbsDownSharp,
+  qrCodeSharp, settingsOutline, settingsSharp, thumbsUp, thumbsDown
 } from 'ionicons/icons';
 import './Menu.css';
 import {auth} from '../firebase';
@@ -91,27 +89,27 @@ const Menu: React.FC = () => {
       badge: -1,
       indicator: -1
     },
-    {
-      title: 'Top 10',
-      url: '/my/top10',
-      iosIcon: ribbonOutline,
-      mdIcon: ribbonSharp,
-      badge: -1,
-      indicator: -1
-    },
+    // {
+    //   title: 'Top 10',
+    //   url: '/my/top10',
+    //   iosIcon: ribbonOutline,
+    //   mdIcon: ribbonSharp,
+    //   badge: -1,
+    //   indicator: -1
+    // },
     {
       title: 'Liked movies',
       url: '/my/movies/view/liked',
-      iosIcon: heartOutline,
-      mdIcon: heartSharp,
+      iosIcon: thumbsUp,
+      mdIcon: thumbsUpSharp,
       badge: likedCount,
       indicator: -1
     },
     {
       title: 'Disliked movies',
       url: '/my/movies/view/disliked',
-      iosIcon: heartDislikeOutline,
-      mdIcon: heartDislikeSharp,
+      iosIcon: thumbsDown,
+      mdIcon: thumbsDownSharp,
       badge: dislikedCount,
       indicator: -1
     },

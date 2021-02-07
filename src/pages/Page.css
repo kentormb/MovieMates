@@ -220,6 +220,27 @@ ion-list.mm-list{
     opacity: 0;
 }
 
+#thumbs_up,
+#thumbs_down{
+    position: fixed;
+    width: 62px;
+    height: 65px;
+    background: url(/assets/thumbs_spring.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    z-index: 9;
+    top: 70%;
+}
+
+#thumbs_down{
+    left: 0;
+
+}
+#thumbs_up{
+    right: 0;
+    background-position: right;
+}
+
 .dark-mode-btn{
     margin-right: -12px;
 }
@@ -263,8 +284,8 @@ body.dark .mm-indicator {
     height: 40px;
     background: #208419;
     z-index: 9999;
-    top: 82px;
-    right: 5px;
+    top: 65px;
+    right: 7px;
     border-radius: 50%;
     box-shadow: 0px 3px 4px black;
 }

@@ -28,10 +28,16 @@ class Carousel {
     private adult: any;
     private leftslide: any;
     private rightslide: any;
+    private leftbutton: any;
+    private rightbutton: any;
     private slideWidth: number;
-    private initSuggestionBtn: boolean;
+    //private initSuggestionBtn: boolean;
+    private settings: any;
+    private posX: number;
+    private posY: number;
+    private deg:number;
 
-    constructor(element: Element | null, page, rootDispatcher: any = null, categories: any = null, orderBy: any = null, year: any = null, adult: any = null) {
+    constructor(element: Element | null, page, rootDispatcher: any = null, categories: any = null, orderBy: any = null, year: any = null, adult: any = null, settings: any = null) {
 
         this.board = element;
         this.page = page;
@@ -42,11 +48,19 @@ class Carousel {
         this.orderBy = orderBy;
         this.year = year;
         this.adult = adult;
+        this.settings = settings;
 
         this.slideWidth = window.innerWidth / 2;
 
-        this.initSuggestionBtn = true;
+        //this.initSuggestionBtn = true;
 
+        if(this.settings.buttons){
+            this.leftbutton = document.getElementById('thumbs_down')
+            this.rightbutton = document.getElementById('thumbs_up')
+
+            this.leftbutton.onclick = () => this.dislike()
+            this.rightbutton.onclick = () => this.like()
+        }
         // handle gestures
         this.handle();
     }
@@ -58,19 +72,21 @@ class Carousel {
             // list all cards
             this.cards = this.board.querySelectorAll(".card");
 
-            if(this.initSuggestionBtn){
-                const sug = document.getElementById('suggest-container');
-                if(sug){
-                    const card0 = this.cards[0].getBoundingClientRect();
-                    sug.style.top = (card0.top - 20) +'px'
-                    sug.style.left = (card0.right - 20) +'px'
-                    console.log(this.initSuggestionBtn)
-                    this.initSuggestionBtn = false;
-                }
-            }
+            // if(this.initSuggestionBtn){
+            //     const sug = document.getElementById('suggest-container');
+            //     if(sug){
+            //         const card0 = this.cards[0].getBoundingClientRect();
+            //         console.log(this.cards[0], card0)
+            //         sug.style.top = (card0.top - 20) +'px'
+            //         sug.style.left = (card0.right - 20) +'px'
+            //         this.initSuggestionBtn = false;
+            //     }
+            // }
 
-            this.leftslide = document.getElementById('left-slide')
-            this.rightslide = document.getElementById('right-slide')
+            if(this.settings.slides) {
+                this.leftslide = document.getElementById('left-slide')
+                this.rightslide = document.getElementById('right-slide')
+            }
 
             // get top card
             this.topCard = this.cards[this.cards.length - 1];
@@ -115,8 +131,8 @@ class Carousel {
                     }
 
                     // get new coordinates
-                    let posX = e.deltaX + this.startPosX
-                    let posY = e.deltaY + this.startPosY
+                    this.posX = e.deltaX + this.startPosX
+                    this.posY = e.deltaY + this.startPosY
 
                     // get ratio between swiped pixels and the axes
                     // @ts-ignore
@@ -127,35 +143,38 @@ class Carousel {
 
                     // get degrees of rotation (between 0 and +/- 45)
                     // @ts-ignore
-                    let deg = this.isDraggingFrom * dirX * Math.abs(propX) * 45
+                    this.deg = this.isDraggingFrom * dirX * Math.abs(propX) * 45
 
                     // move and rotate card
-                    this.topCard.style.transform ='translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg)'
+                    this.topCard.style.transform ='translateX(' + this.posX + 'px) translateY(' + this.posY + 'px) rotate(' + this.deg + 'deg)'
 
                     // get scale ratio, between .95 and 1
                     let scale = (95 + (5 * Math.abs(propX))) / 100
 
                     // move and rotate top card
-                    this.topCard.style.transform ='translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg) rotateY(0deg) scale(1)'
+                    this.topCard.style.transform ='translateX(' + this.posX + 'px) translateY(' + this.posY + 'px) rotate(' + this.deg + 'deg) rotateY(0deg) scale(1)'
 
                     // scale up next card
                     if (this.nextCard) this.nextCard.style.transform = 'translateX(-50%) translateY(-50%) rotate(0deg) rotateY(0deg) scale(' + scale + ')'
 
-                    if(propX > 0 && e.direction === Hammer.DIRECTION_RIGHT){
-                        this.leftslide.style.opacity = 0
-                        this.rightslide.style.opacity = e.distance / this.slideWidth;
-                    }
+                    if(this.settings.slides) {
+                        if (propX > 0 && e.direction === Hammer.DIRECTION_RIGHT) {
+                            this.leftslide.style.opacity = 0
+                            this.rightslide.style.opacity = e.distance / this.slideWidth;
+                        }
 
-                    if(propX < 0 && e.direction === Hammer.DIRECTION_LEFT){
-                        this.rightslide.style.opacity = 0
-                        this.leftslide.style.opacity =  e.distance / this.slideWidth;
+                        if (propX < 0 && e.direction === Hammer.DIRECTION_LEFT) {
+                            this.rightslide.style.opacity = 0
+                            this.leftslide.style.opacity = e.distance / this.slideWidth;
+                        }
                     }
 
                  if (e.isFinal && this.board) {
 
-                        this.rightslide.style.opacity = 0
-                        this.leftslide.style.opacity = 0
-
+                     if(this.settings.slides) {
+                         this.rightslide.style.opacity = 0
+                         this.leftslide.style.opacity = 0
+                     }
                         this.isPanning = false
 
                         let successful = false
@@ -166,63 +185,29 @@ class Carousel {
                         // check threshold and movement direction
                         if (propX > 0.25 && e.direction === Hammer.DIRECTION_RIGHT) {
 
-                            // @ts-ignore
-                            document.getElementsByClassName('right-slide')[0].style.opacity = 0
+
+                            if(this.settings.slides) {
+                                // @ts-ignore
+                                document.getElementsByClassName('right-slide')[0].style.opacity = 0
+                            }
 
                             successful = true
-                            // get right border position
-                            posX = this.board.clientWidth
-
-                            updateUsersMovies(getCurrentUser().uid, this.topCard.attributes.key.value,1).then((result) => {
-                                if(result.error === 0){
-                                    this.rootDispatcher.incLiked();
-                                }
-                            });
+                            this.like()
 
                         }
                         else if (propX < -0.25 && e.direction === Hammer.DIRECTION_LEFT) {
 
-                            // @ts-ignore
-                            document.getElementsByClassName('left-slide')[0].style.opacity = 0
+                            if(this.settings.slides) {
+                                // @ts-ignore
+                                document.getElementsByClassName('left-slide')[0].style.opacity = 0
+                            }
 
                             successful = true
-                            // get left border position
-                            posX = - (this.board.clientWidth + this.topCard.clientWidth)
-
-                            updateUsersMovies(getCurrentUser().uid, this.topCard.attributes.key.value,0).then((result) => {
-                                if(result.error === 0){
-                                    this.rootDispatcher.incDisLiked();
-                                }
-                            });
+                            this.dislike()
 
                         }
 
-                        if (successful) {
-
-                            // throw card in the chosen direction
-                            this.topCard.style.transform = 'translateX(' + posX + 'px) translateY(' + posY + 'px) rotate(' + deg + 'deg)'
-
-                            // wait transition end
-                            setTimeout(() => {
-                                // remove swiped card
-                                try {
-                                    // @ts-ignore
-                                    this.board.removeChild(this.topCard)
-                                    // add new card
-                                    let  cardsleft = this.board.getElementsByClassName('card').length;
-                                    if(cardsleft === 15) {
-                                        this.push()
-                                    }
-                                    // handle gestures on new top card
-                                    this.handle()
-
-                                }
-                                catch (e){
-                                    console.log(e.message)
-                                }
-                            }, 200)
-
-                        } else {
+                        if (!successful) {
                             // reset card position
                             this.topCard.style.transform = 'translateX(-50%) translateY(-50%) rotate(0deg)'
                         }
@@ -276,6 +261,75 @@ class Carousel {
 
 
     }
+
+    like(){
+
+        this.posX = this.board.clientWidth
+
+        updateUsersMovies(getCurrentUser().uid, this.topCard.attributes.key.value,1).then((result) => {
+            if(result.error === 0){
+                this.rootDispatcher.incLiked();
+            }
+        });
+
+        // throw card in the chosen direction
+        this.topCard.style.transform = 'translateX(' + this.posX + 'px) translateY(' + this.posY + 'px) rotate(' + 45 + 'deg)'
+
+        // wait transition end
+        setTimeout(() => {
+            // remove swiped card
+            try {
+                // @ts-ignore
+                this.board.removeChild(this.topCard)
+                // add new card
+                let  cardsleft = this.board.getElementsByClassName('card').length;
+                if(cardsleft === 15) {
+                    this.push()
+                }
+                // handle gestures on new top card
+                this.handle()
+
+            }
+            catch (e){
+                console.log(e.message)
+            }
+        }, 200)
+    }
+
+    dislike(){
+
+        // get left border position
+        this.posX = - (this.board.clientWidth + this.topCard.clientWidth)
+
+        updateUsersMovies(getCurrentUser().uid, this.topCard.attributes.key.value,0).then((result) => {
+            if(result.error === 0){
+                this.rootDispatcher.incDisLiked();
+            }
+        });
+
+        // throw card in the chosen direction
+        this.topCard.style.transform = 'translateX(' + this.posX + 'px) translateY(' + this.posY + 'px) rotate(' + 45 + 'deg)'
+
+        // wait transition end
+        setTimeout(() => {
+            // remove swiped card
+            try {
+                // @ts-ignore
+                this.board.removeChild(this.topCard)
+                // add new card
+                let  cardsleft = this.board.getElementsByClassName('card').length;
+                if(cardsleft === 15) {
+                    this.push()
+                }
+                // handle gestures on new top card
+                this.handle()
+
+            }
+            catch (e){
+                console.log(e.message)
+            }
+        }, 200)
+    }
 }
 
 interface Props{
@@ -289,7 +343,7 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("You have already suggested this movie");
 
-    const {categories, orderBy, year, adult} = useSelector<StateProps>((state: StateProps) => {
+    const {categories, orderBy, year, adult, settings} = useSelector<StateProps>((state: StateProps) => {
       return state
     });
 
@@ -311,8 +365,6 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
 
     }
 
-
-
     useEffect(() => {
         if(categories.length > 0){
             setIsLoaded(false);
@@ -324,7 +376,7 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
                     for (const [index, value] of  Object.entries(results)) {
                         board.append(Card(+index,value));
                     }
-                    new Carousel(board,2, rootDispatcher, categories, orderBy, year, adult);
+                    new Carousel(board,2, rootDispatcher, categories, orderBy, year, adult, settings);
                 }
                 catch (e) {
                     setIsLoaded(false);
@@ -340,14 +392,15 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
                 }
             })
         }
-    }, [categories,orderBy,year]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [categories,orderBy,year,settings]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!isLoaded) {
         return (<IonLoading isOpen/>);
     } else {
         return (
             <>
-                <span id="left-slide" className={"left-slide"} />
+                { settings.buttons ? <><div id="thumbs_down"/><div id="thumbs_up"/></> : '' }
+                { settings.slides ? <span id="left-slide" className={"left-slide"} /> : '' }
                 <div id="board"/>
                 {friendList.length > 0 ?
                     <div className={"suggest-container"} id={"suggest-container"}>
@@ -365,7 +418,7 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
                         </div>
                     </div>
                     : '' }
-                <span id="right-slide" className={"right-slide"} />
+                { settings.slides ? <span id="right-slide" className={"right-slide"} /> : '' }
                 <IonToast
                     isOpen={showToast}
                     onDidDismiss={() => setShowToast(false)}

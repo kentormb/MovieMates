@@ -20,7 +20,10 @@ export enum ActionType {
     UPDATE_ADULT = 'UPDATE_ADULT',
     UPDATE_DARKM_MODE = 'UPDATE_DARKM_MODE',
     UPDATE_INDICATORS = 'UPDATE_INDICATORS',
-    UPDATE_INDICATOR_MENU = 'UPDATE_INDICATOR_MENU'
+    UPDATE_INDICATOR_MENU = 'UPDATE_INDICATOR_MENU',
+    UPDATE_SETTINGS = 'UPDATE_SETTINGS',
+    UPDATE_SETTINGS_SLIDS = 'UPDATE_SETTINGS_SLIDS',
+    UPDATE_SETTINGS_BUTTONS = 'UPDATE_SETTINGS_BUTTONS'
 }
 
 export const initialState = {
@@ -32,7 +35,8 @@ export const initialState = {
     years: 10,
     adult: 0,
     darkMode: false,
-    indicators : {menu: false, friend_request: 0}
+    indicators : {menu: false, friend_request: 0},
+    settings: {slides: true, buttons: false}
 
 }
 
@@ -45,7 +49,8 @@ export interface StateProps {
     years: number,
     adult: number,
     darkMode: boolean,
-    indicators : {menu: boolean, friend_request: number}
+    indicators : {menu: boolean, friend_request: number},
+    settings: {slides: boolean, buttons: boolean}
 }
 
 interface DispatchAction extends Action<ActionType> {
@@ -150,6 +155,21 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 indicators: {menu: action.payload, friend_request: state.indicators.friend_request}
             }
+        case ActionType.UPDATE_SETTINGS:
+            return {
+                ...state,
+                settings: action.payload
+            }
+        case ActionType.UPDATE_SETTINGS_SLIDS:
+            return {
+                ...state,
+                settings: {slides: action.payload, buttons: state.settings.buttons}
+            }
+        case ActionType.UPDATE_SETTINGS_BUTTONS:
+            return {
+                ...state,
+                settings: {buttons: action.payload, slides: state.settings.slides}
+            }
     }
     return state;
 }
@@ -178,6 +198,9 @@ export class RootDispatcher {
     updateIndicators = (payload) => this.dispatch({type: ActionType.UPDATE_INDICATORS, payload: payload});
     updateIndicatorsMenu = (payload) => this.dispatch({type: ActionType.UPDATE_INDICATOR_MENU, payload: payload});
     updateFriends = (payload) => this.dispatch({type: ActionType.UPDATE_FRIENDS, payload: payload});
+    updateSettings = (payload) => this.dispatch({type: ActionType.UPDATE_SETTINGS, payload: payload});
+    updateSettingsSlides = (payload) => this.dispatch({type: ActionType.UPDATE_SETTINGS_SLIDS, payload: payload});
+    updateSettingsButtons = (payload) => this.dispatch({type: ActionType.UPDATE_SETTINGS_BUTTONS, payload: payload});
 }
 
 export default reducer;
