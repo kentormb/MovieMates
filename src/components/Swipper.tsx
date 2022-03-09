@@ -6,8 +6,8 @@ import {getFriends, getMovies, updateUsersMovies, suggestMovieToFriend} from "./
 import {StateProps} from '../store/reducer';
 import {useSelector} from "react-redux"
 import {getCurrentUser} from "../auth";
+import {showSuggestions} from "../configs"
 
-//https://www.hackdoor.io/articles/8MNPqDpV/build-a-full-featured-tinder-like-carousel-in-vanilla-javascript
 let topCardId = 0;
 
 class Carousel {
@@ -23,8 +23,9 @@ class Carousel {
     private page: number;
     private rootDispatcher: any;
     private categories: any;
+    private selectedProviders: any;
     private orderBy: any;
-    private year: any;
+    private years: any;
     private adult: any;
     private leftslide: any;
     private rightslide: any;
@@ -37,7 +38,7 @@ class Carousel {
     private posY: number;
     private deg:number;
 
-    constructor(element: Element | null, page, rootDispatcher: any = null, categories: any = null, orderBy: any = null, year: any = null, adult: any = null, settings: any = null) {
+    constructor(element: Element | null, page, rootDispatcher: any = null, categories: any = null, orderBy: any = null, years: any = null, adult: any = null, settings: any = null, selectedProviders: any = null) {
 
         this.board = element;
         this.page = page;
@@ -46,9 +47,10 @@ class Carousel {
 
         this.categories = categories;
         this.orderBy = orderBy;
-        this.year = year;
+        this.years = years;
         this.adult = adult;
         this.settings = settings;
+        this.selectedProviders = selectedProviders;
 
         this.slideWidth = window.innerWidth / 2;
 
@@ -58,8 +60,12 @@ class Carousel {
             this.leftbutton = document.getElementById('thumbs_down')
             this.rightbutton = document.getElementById('thumbs_up')
 
-            this.leftbutton.onclick = () => this.dislike()
-            this.rightbutton.onclick = () => this.like()
+            this.leftbutton.onclick = () => {
+                this.dislike()
+            }
+            this.rightbutton.onclick = () => {
+                this.like()
+            }
         }
         // handle gestures
         this.handle();
@@ -109,6 +115,10 @@ class Carousel {
 
                 // pass event data to custom callback
                 this.hammer.on("pan", (e) => {
+                    if(e.target.classList.contains('nomove')){
+                        return;
+                    }
+
                     if (!this.isPanning) {
                         this.isPanning = true
 
@@ -176,7 +186,6 @@ class Carousel {
                          this.leftslide.style.opacity = 0
                      }
                         this.isPanning = false
-
                         let successful = false
 
                         // set back transition property
@@ -184,29 +193,21 @@ class Carousel {
 
                         // check threshold and movement direction
                         if (propX > 0.25 && e.direction === Hammer.DIRECTION_RIGHT) {
-
-
                             if(this.settings.slides) {
                                 // @ts-ignore
                                 document.getElementsByClassName('right-slide')[0].style.opacity = 0
                             }
-
                             successful = true
                             this.like()
-
                         }
                         else if (propX < -0.25 && e.direction === Hammer.DIRECTION_LEFT) {
-
                             if(this.settings.slides) {
                                 // @ts-ignore
                                 document.getElementsByClassName('left-slide')[0].style.opacity = 0
                             }
-
                             successful = true
                             this.dislike()
-
                         }
-
                         if (!successful) {
                             // reset card position
                             this.topCard.style.transform = 'translateX(-50%) translateY(-50%) rotate(0deg)'
@@ -215,6 +216,9 @@ class Carousel {
                 });
 
                 this.hammer.on("tap", (e) => {
+                    if(e.target.classList.contains('nomove')){
+                        return;
+                    }
                     this.tap(e);
                 });
             }
@@ -224,9 +228,10 @@ class Carousel {
     push() {
         if(this.board){
             const cat = this.categories.filter((item)=>item.checked).map((item)=>item.id).join();
-            getMovies(this.page, getCurrentUser().uid, cat, this.orderBy, this.year, this.adult).then((results) => {
+            getMovies(this.page, getCurrentUser().uid, cat, this.orderBy, this.years, this.adult, this.selectedProviders.join()).then((results) => {
                 try {
-                    for (const [index, value] of  Object.entries(results)) {
+                    let reversed = [...results].reverse();
+                    for (const [index, value] of Object.entries(reversed)) {
                         const card = Card((+index*this.page),value);
                         this.board.insertBefore(card, this.board.firstChild)
                     }
@@ -343,7 +348,7 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("You have already suggested this movie");
 
-    const {categories, orderBy, year, adult, settings} = useSelector<StateProps>((state: StateProps) => {
+    const {categories, orderBy, years, adult, settings, selectedProviders} = useSelector<StateProps>((state: StateProps) => {
       return state
     });
 
@@ -369,14 +374,14 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
         if(categories.length > 0){
             setIsLoaded(false);
             const cat = categories.filter((item)=>item.checked).map((item)=>item.id).join();
-            getMovies(1, getCurrentUser().uid, cat, orderBy, year, adult).then((results) => {
+            getMovies(1, getCurrentUser().uid, cat, orderBy, years, adult, selectedProviders.join()).then((results) => {
                 setIsLoaded(true);
                 try {
                     let board = document.querySelector('#board');
                     for (const [index, value] of  Object.entries(results)) {
                         board.append(Card(+index,value));
                     }
-                    new Carousel(board,2, rootDispatcher, categories, orderBy, year, adult, settings);
+                    new Carousel(board,2, rootDispatcher, categories, orderBy, years, adult, settings, selectedProviders);
                 }
                 catch (e) {
                     setIsLoaded(false);
@@ -392,7 +397,7 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
                 }
             })
         }
-    }, [categories,orderBy,year,settings]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [categories,orderBy,years,settings]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!isLoaded) {
         return (<IonLoading isOpen/>);
@@ -402,7 +407,7 @@ const Swipper: React.FC<Props> = ({rootDispatcher}) => {
                 { settings.buttons ? <><div id="thumbs_down"/><div id="thumbs_up"/></> : '' }
                 { settings.slides ? <span id="left-slide" className={"left-slide"} /> : '' }
                 <div id="board"/>
-                {friendList.length > 0 ?
+                {friendList.length > 0 && showSuggestions() ?
                     <div className={"suggest-container"} id={"suggest-container"}>
                         <span className={"suggest-btn plus"} onClick={showSuggestedFriends}/>
                         <div className={"suggest-friends-list"} id={"suggest-friends-list"}>

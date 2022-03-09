@@ -129,8 +129,8 @@ const Friends: React.FC = () => {
 
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     getUserFriends().then(()=>{
-      getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number})=>{
-        rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked})})
+      getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number, suggestions: number})=>{
+        rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked, suggestions: mc.suggestions})})
       event.detail.complete()
     })
   }

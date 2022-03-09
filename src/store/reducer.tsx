@@ -20,36 +20,41 @@ export enum ActionType {
     UPDATE_ADULT = 'UPDATE_ADULT',
     UPDATE_DARKM_MODE = 'UPDATE_DARKM_MODE',
     UPDATE_INDICATORS = 'UPDATE_INDICATORS',
-    UPDATE_INDICATOR_MENU = 'UPDATE_INDICATOR_MENU',
+    UPDATE_INDICATORS_MENU = 'UPDATE_INDICATORS_MENU',
+    UPDATE_INDICATORS_FRIEND_REQUESTS = 'UPDATE_INDICATORS_FRIENDS_REQUESTS',
+    UPDATE_INDICATORS_SUGGESTIONS = 'UPDATE_INDICATORS_SUGGESTIONS',
     UPDATE_SETTINGS = 'UPDATE_SETTINGS',
     UPDATE_SETTINGS_SLIDS = 'UPDATE_SETTINGS_SLIDS',
-    UPDATE_SETTINGS_BUTTONS = 'UPDATE_SETTINGS_BUTTONS'
+    UPDATE_SETTINGS_BUTTONS = 'UPDATE_SETTINGS_BUTTONS',
+    UPDATE_SELECTED_PROVIDERS = 'UPDATE_SELECTED_PROVIDERS'
 }
 
 export const initialState = {
-    menu: {disliked: 0, friends: 0, liked: 0},
+    menu: {disliked: 0, friends: 0, liked: 0, suggestions: 0},
     user: { username: '', name: '', photo: '', qr: ''},
     friends: [],
     categories: [],
+    selectedProviders: [],
     orderBy: 1,
     years: 10,
     adult: 0,
     darkMode: false,
-    indicators : {menu: false, friend_request: 0},
+    indicators : {menu: false, friend_request: 0, suggestions: 0},
     settings: {slides: true, buttons: false}
 
 }
 
 export interface StateProps {
-    menu: {disliked: number, friends: number, liked: number},
+    menu: {disliked: number, friends: number, liked: number, suggestions: number},
     user: { username: string, name: string, photo: string, qr: string},
     friends: [],
     categories: [],
+    selectedProviders: [],
     orderBy: number,
     years: number,
     adult: number,
     darkMode: boolean,
-    indicators : {menu: boolean, friend_request: number},
+    indicators : {menu: boolean, friend_request: number, suggestions: number},
     settings: {slides: boolean, buttons: boolean}
 }
 
@@ -63,52 +68,52 @@ const reducer = (state = initialState, action) => {
         case ActionType.UPDATE_MENU:
             return {
                 ...state,
-                menu: {disliked: action.payload.disliked, friends: action.payload.friends, liked: action.payload.liked}
+                menu: {disliked: action.payload.disliked, friends: action.payload.friends, liked: action.payload.liked, suggestions: action.payload.suggestions}
             }
         case ActionType.UPDATE_MENU_DISLIKED:
             return {
                 ...state,
-                menu: {disliked: action.payload.disliked, friends: state.menu.friends, liked: state.menu.liked}
+                menu: {disliked: action.payload.disliked, friends: state.menu.friends, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_FRIENDS:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: action.payload.friends, liked: state.menu.liked}
+                menu: {disliked: state.menu.disliked, friends: action.payload.friends, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_FRIENDS_INC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: state.menu.friends + 1, liked: state.menu.liked}
+                menu: {disliked: state.menu.disliked, friends: state.menu.friends + 1, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_FRIENDS_DEC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: state.menu.friends - 1, liked: state.menu.liked}
+                menu: {disliked: state.menu.disliked, friends: state.menu.friends - 1, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_LIKES_INC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: state.menu.friends, liked: state.menu.liked + 1}
+                menu: {disliked: state.menu.disliked, friends: state.menu.friends, liked: state.menu.liked + 1, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_LIKES_DEC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: state.menu.friends, liked: state.menu.liked - 1}
+                menu: {disliked: state.menu.disliked, friends: state.menu.friends, liked: state.menu.liked - 1, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_DISLIKES_INC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked + 1, friends: state.menu.friends, liked: state.menu.liked}
+                menu: {disliked: state.menu.disliked + 1, friends: state.menu.friends, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_DISLIKES_DEC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked - 1, friends: state.menu.friends, liked: state.menu.liked}
+                menu: {disliked: state.menu.disliked - 1, friends: state.menu.friends, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_LIKED:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: state.menu.friends, liked: action.payload.liked}
+                menu: {disliked: state.menu.disliked, friends: state.menu.friends, liked: action.payload.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_USER:
             return {
@@ -150,10 +155,20 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 indicators: action.payload
             }
-        case ActionType.UPDATE_INDICATOR_MENU:
+        case ActionType.UPDATE_INDICATORS_MENU:
             return {
                 ...state,
-                indicators: {menu: action.payload, friend_request: state.indicators.friend_request}
+                indicators: {menu: action.payload, friend_request: state.indicators.friend_request, suggestions: state.indicators.suggestions}
+            }
+        case ActionType.UPDATE_INDICATORS_FRIEND_REQUESTS:
+            return {
+                ...state,
+                indicators: {friend_request: action.payload, menu: state.indicators.menu, suggestions: state.indicators.suggestions}
+            }
+        case ActionType.UPDATE_INDICATORS_SUGGESTIONS:
+            return {
+                ...state,
+                indicators: {suggestions: action.payload, menu: state.indicators.menu, friend_request: state.indicators.friend_request}
             }
         case ActionType.UPDATE_SETTINGS:
             return {
@@ -169,6 +184,11 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 settings: {buttons: action.payload, slides: state.settings.slides}
+            }
+        case ActionType.UPDATE_SELECTED_PROVIDERS:
+            return {
+                ...state,
+                selectedProviders: action.payload
             }
     }
     return state;
@@ -196,11 +216,14 @@ export class RootDispatcher {
     updateAdults = (payload) => this.dispatch({type: ActionType.UPDATE_ADULT, payload: payload});
     updateDarkMode = (payload) => this.dispatch({type: ActionType.UPDATE_DARKM_MODE, payload: payload});
     updateIndicators = (payload) => this.dispatch({type: ActionType.UPDATE_INDICATORS, payload: payload});
-    updateIndicatorsMenu = (payload) => this.dispatch({type: ActionType.UPDATE_INDICATOR_MENU, payload: payload});
+    updateIndicatorsMenu = (payload) => this.dispatch({type: ActionType.UPDATE_INDICATORS_MENU, payload: payload});
+    updateIndicatorsFriendRequests = (payload) => this.dispatch({type: ActionType.UPDATE_INDICATORS_FRIEND_REQUESTS, payload: payload});
+    updateIndicatorsSuggestions = (payload) => this.dispatch({type: ActionType.UPDATE_INDICATORS_SUGGESTIONS, payload: payload});
     updateFriends = (payload) => this.dispatch({type: ActionType.UPDATE_FRIENDS, payload: payload});
     updateSettings = (payload) => this.dispatch({type: ActionType.UPDATE_SETTINGS, payload: payload});
     updateSettingsSlides = (payload) => this.dispatch({type: ActionType.UPDATE_SETTINGS_SLIDS, payload: payload});
     updateSettingsButtons = (payload) => this.dispatch({type: ActionType.UPDATE_SETTINGS_BUTTONS, payload: payload});
+    updateSelectedProviders = (payload) => this.dispatch({type: ActionType.UPDATE_SELECTED_PROVIDERS, payload: payload});
 }
 
 export default reducer;

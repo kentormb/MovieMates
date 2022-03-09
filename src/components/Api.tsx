@@ -11,11 +11,12 @@ export function getMovies(page: number = 1,
                           cat: string = '',
                           what: string = '1',
                           when: string = '10',
-                          adult: number = 0){
+                          adult: number = 0,
+                          prov: string){
 
     const token = getToken();
-    const url = 'https://marios.com.gr/movies/api/?status=13&userid=' + useId + '&page=' + page + '&when=' + when + '&what=' + what + '&cat=' + cat + '&adult=' + adult + '&token=' + token;
-    //console.log('get movies', url);
+    const url = 'https://marios.com.gr/movies/api/?status=13&userid=' + useId + '&page=' + page + '&when=' + when + '&what=' + what + '&cat=' + cat + '&adult=' + adult + '&prov=' + prov + '&token=' + token;
+    // console.log('get movies', url);
     return fetch(url)
         .then(res => res.json())
         .then((result) => {
@@ -105,7 +106,7 @@ export function getMenuCounts(uid: string){
     return fetch(url)
         .then(res => res.json())
         .then((result) => {
-            return {friends: result.results.friends, liked: result.results.liked, disliked: result.results.disliked};
+            return {friends: result.results.friends, liked: result.results.liked, disliked: result.results.disliked, suggestions: result.results.suggestions};
         })
         .catch(error => console.warn(error));
 }
@@ -201,6 +202,55 @@ export function suggestMovieToFriend(uid:string, mid:number, fid:number){
     const token = getToken();
     const url = 'https://marios.com.gr/movies/api/?status=16&uid=' + uid + '&mid='+ mid + '&fid='+ fid + '&token=' + token;
     //console.log('suggest movie', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+            return result;
+        })
+        .catch(error => console.warn(error));
+}
+
+export function getIndicators(uid: string){
+    const token = getToken();
+    const url = 'https://marios.com.gr/movies/api/?status=17&uid=' + uid + '&token=' + token;
+    //console.log('get menu count', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+            return result.results;
+        })
+        .catch(error => console.warn(error));
+}
+
+export function getSuggestedMovies(uid: string){
+
+    const token = getToken();
+    const url = 'https://marios.com.gr/movies/api/?status=18&uid=' + uid + '&token=' + token;
+    //console.log('get suggested movies', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+            return result.results;
+        })
+        .catch(error => console.warn(error));
+}
+
+export function getProviders(uid:string, mid:number){
+    const token = getToken();
+    const url = 'https://marios.com.gr/movies/api/?status=19&uid=' + uid + '&mid='+ mid + '&token=' + token;
+    //console.log('accept friend request', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+            return result;
+        })
+        .catch(error => console.warn(error));
+}
+
+export function getAllProviders(uid:string, page:number = 1){
+    const token = getToken();
+    const url = 'https://marios.com.gr/movies/api/?status=20&uid=' + uid + '&page=' + page + '&token=' + token;
+    //console.log('accept friend request', url);
     return fetch(url)
         .then(res => res.json())
         .then((result) => {

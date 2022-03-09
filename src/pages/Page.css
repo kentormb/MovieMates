@@ -7,7 +7,7 @@
 }
 
 .card {
-    width: 90%;
+    width: 85%;
     height: auto;
     max-width: 400px;
     max-height: 695px;
@@ -28,12 +28,13 @@
 }
 
 .card .poster{
-    height: 550px;
+    height: auto;
     overflow: hidden;
 }
 
 .card .poster img{
     border-radius: 3px 3px 0 0;
+    min-height: 60vh;
 }
 
 .card .content{
@@ -92,7 +93,7 @@
     top: 0;
     height: 100%;
     width: 100%;
-    background: #000000b0;
+    background: #000000de;
     color: white;
     padding: 15px;
     text-align: justify;
@@ -121,11 +122,170 @@
 
 .card .moreinfo .overview{
     margin-top: 40px;
+    max-height: 320px;
+    overflow: hidden;
+}
+
+.card .moreinfo .providers{
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    max-height: 100px;
+    height: 100px;
+    flex-wrap: wrap;
+    display: none;
+}
+
+.card .moreinfo .providers .lang,
+.card .moreinfo .providers .type{
+    height: 30px;
+    width: 50%;
+}
+.card .moreinfo .providers .lang_label:after,
+.card .moreinfo .providers .type_label:after {
+    width: 0;
+    height: 0;
+    border-top: 5px solid black;
+    border-left: 5px solid black;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    transform: rotate(45deg);
+}
+
+body.dark .card .moreinfo .providers .lang_label:after,
+body.dark .card .moreinfo .providers .type_label:after {
+    border-top: 5px solid white;
+    border-left: 5px solid white;
+}
+
+.card .moreinfo .providers .lang_label:before,
+.card .moreinfo .providers .type_label:before {
+    width: 0;
+    height: 0;
+    border-top: 5px solid black;
+    border-left: 5px solid transparent;
+    border-right: 5px solid black;
+    border-bottom: 5px solid transparent;
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    transform: rotate(135deg);
+}
+
+
+body.dark .card .moreinfo .providers .lang_label:before,
+body.dark .card .moreinfo .providers .type_label:before {
+    border-top: 5px solid white;
+    border-right: 5px solid white;
+}
+
+.card .moreinfo .providers .lang .lang_label,
+.card .moreinfo .providers .type .type_label{
+    text-align: center;
+    background: white;
+    color: black;
+    padding: 3px;
+    margin: 2px;
+    text-transform: capitalize;
+    position: relative;
+}
+
+body.dark .card .moreinfo .providers .lang .lang_label,
+body.dark .card .moreinfo .providers .type .type_label{
+    background: #2e2e2e;
+    color: white;
+}
+
+.card .moreinfo .providers .type .type_container,
+.card .moreinfo .providers .lang .lang_container{
+    display: none;
+    position: fixed;
+    background: white;
+    color: black;
+    width: 95%;
+    padding: 18px;
+    flex-wrap: wrap;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 3px;
+    z-index: 1;
+    max-height: 37vh;
+    overflow: scroll;
+    border: 1px solid #8f8f8f;
+}
+
+.card .moreinfo .providers .type .type_container{
+    justify-content: space-around;
+}
+
+body.dark .card .moreinfo .providers .type .type_container,
+body.dark .card .moreinfo .providers .lang .lang_container{
+    background: #082331;
+    color: white;
+}
+
+.card .moreinfo .providers .lang .lang_container span{
+    margin: 11px 0;
+    width: 25%;
+    text-align: center;
+}
+
+.card .moreinfo .providers .type .type_container span{
+    width: auto;
+    text-transform: capitalize;
+}
+
+.card .moreinfo .providers .flag{
+    height: 14px;
+    margin-right: 8px;
+    max-width: 20px;
+}
+
+.card .moreinfo .providers .container{
+    height: 70px;
+    width: 100%;
+    background: white;
+    color: black;
+    padding: 2px;
+    white-space: nowrap;
+    overflow: scroll;
+}
+
+body.dark .card .moreinfo .providers .container{
+    background: #2e2e2e;
+    color: white;
+}
+
+.card .moreinfo .providers .container img{
+    width: 56px;
+    margin: 3px;
 }
 
 .card .trailer{
-    margin-top: 10px;
+    margin-top: 20px;
     text-align: center;
+}
+
+.card .trailer a{
+    background: #082331;
+    padding: 10px;
+    color: white;
+    text-decoration: none;
+}
+
+.card .trailer.youtube a{
+    background: #961818;
+}
+
+.card .trailer.vimeo a {
+    background: #186496;
 }
 
 .friend-avatar{
@@ -319,6 +479,16 @@ body.dark .suggest-container .plus{
     transform: rotateZ(45deg);
 }
 
+.suggested-friend-icon{
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 100%;
+    border: 1px solid #082331;
+    width: 40px;
+    height: 40px;
+}
+
 .suggest-friends-list{
     position: absolute;
     top: 30px;
@@ -395,4 +565,35 @@ body.dark .suggest-friends-list ul li {
 .suggest-friends-list ul li span{
     font-size: 13px;
     white-space: nowrap;
+}
+
+.logo{
+    max-width: 170px;
+    margin: 60px auto 30px auto;
+}
+
+.login-title{
+    text-align: center;
+    border-bottom: 1px solid #939393;
+    padding: 10px;
+}
+
+.providers-filter{
+    max-height: 150px;
+    overflow: scroll;
+}
+
+.providers-filter img{
+    margin: 5px;
+    width: 50px;
+}
+
+.providers-filter img.selected{
+    border: 3px solid #7fa650;
+}
+
+.providers-filter span{
+    display: block;
+    margin: 6px;
+    text-align: center;
 }

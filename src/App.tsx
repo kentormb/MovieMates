@@ -9,6 +9,7 @@ import {AuthContext, useAuthInit} from './auth';
 import {RootDispatcher} from './store/reducer';
 import { useDispatch } from "react-redux"
 import {Plugins} from "@capacitor/core";
+import Reset from "./pages/Reset";
 
 
 const App: React.FC = () => {
@@ -61,10 +62,13 @@ const App: React.FC = () => {
             <Route path="/register">
               <Register />
             </Route>
+            <Route path="/resetpassword">
+              <Reset />
+            </Route>
             <Route path="/my">
               <AppPrivate />
             </Route>
-            <Redirect from="/" to="/my/movies" exact />
+            <Redirect from="/" to="/login" exact />
           </IonRouterOutlet>
         </IonReactRouter>
       </AuthContext.Provider>

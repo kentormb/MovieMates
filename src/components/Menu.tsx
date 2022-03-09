@@ -22,7 +22,7 @@ import {
   peopleCircleOutline,
   thumbsUpSharp,
   thumbsDownSharp,
-  qrCodeSharp, settingsOutline, settingsSharp, thumbsUp, thumbsDown
+  qrCodeSharp, settingsOutline, settingsSharp, thumbsUp, thumbsDown, happySharp, happyOutline
 } from 'ionicons/icons';
 import './Menu.css';
 import {auth} from '../firebase';
@@ -31,6 +31,7 @@ import {getCurrentUser} from "../auth";
 import {RootDispatcher, StateProps} from '../store/reducer';
 import { useDispatch, useSelector } from "react-redux"
 import {Plugins} from "@capacitor/core";
+import {showSuggestions} from "../configs"
 
 interface AppPage {
   url: string;
@@ -39,12 +40,14 @@ interface AppPage {
   title: string;
   badge: number;
   indicator: number;
+  show: boolean;
 }
 
 const Menu: React.FC = () => {
 
   const location = useLocation();
   const [friendsCount, setFriendsCount] = useState(-1)
+  const [suggestionsCount, setSuggestionsCount] = useState(-1)
   const [likedCount, setLikedCount] = useState(-1)
   const [dislikedCount, setDisLikedCount] = useState(-1)
   const [qrImage, setQrImage] = useState(false)
@@ -71,7 +74,8 @@ const Menu: React.FC = () => {
       iosIcon: filmOutline,
       mdIcon: filmSharp,
       badge: -1,
-      indicator: -1
+      indicator: -1,
+      show: true
     },
     {
       title: 'Friends',
@@ -79,7 +83,8 @@ const Menu: React.FC = () => {
       iosIcon: peopleOutline,
       mdIcon: peopleSharp,
       badge: friendsCount,
-      indicator: indicators.friend_request
+      indicator: indicators.friend_request,
+      show: true
     },
     {
       title: 'Groups',
@@ -87,23 +92,26 @@ const Menu: React.FC = () => {
       iosIcon: peopleCircleOutline,
       mdIcon: peopleCircleSharp,
       badge: -1,
-      indicator: -1
+      indicator: -1,
+      show: true
     },
-    // {
-    //   title: 'Top 10',
-    //   url: '/my/top10',
-    //   iosIcon: ribbonOutline,
-    //   mdIcon: ribbonSharp,
-    //   badge: -1,
-    //   indicator: -1
-    // },
+    {
+      title: 'Suggestions',
+      url: '/my/suggestions',
+      iosIcon: happyOutline,
+      mdIcon: happySharp,
+      badge: suggestionsCount,
+      indicator: indicators.suggestions,
+      show: showSuggestions()
+    },
     {
       title: 'Liked movies',
       url: '/my/movies/view/liked',
       iosIcon: thumbsUp,
       mdIcon: thumbsUpSharp,
       badge: likedCount,
-      indicator: -1
+      indicator: -1,
+      show: true
     },
     {
       title: 'Disliked movies',
@@ -111,7 +119,8 @@ const Menu: React.FC = () => {
       iosIcon: thumbsDown,
       mdIcon: thumbsDownSharp,
       badge: dislikedCount,
-      indicator: -1
+      indicator: -1,
+      show: true
     },
     {
       title: 'Account Settings',
@@ -119,15 +128,16 @@ const Menu: React.FC = () => {
       iosIcon: settingsOutline,
       mdIcon: settingsSharp,
       badge: -1,
-      indicator: -1
+      indicator: -1,
+      show: true
     }
   ];
 
   useEffect(()=>{
     const updateMenu = () => {
-      getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number})=>{
+      getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number, suggestions: number})=>{
         if(mc){
-          rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked})
+          rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked, suggestions: mc.suggestions})
         }
       })
     }
@@ -138,6 +148,7 @@ const Menu: React.FC = () => {
     setFriendsCount(menu.friends)
     setLikedCount(menu.liked)
     setDisLikedCount(menu.disliked)
+    setSuggestionsCount(menu.suggestions)
   },[menu]);
 
   return (
@@ -156,8 +167,8 @@ const Menu: React.FC = () => {
             </IonButton>
           </IonButtons>
           {appPages.map((appPage, index) => {
-            return (
-              <IonMenuToggle key={index} autoHide={false}>
+            return appPage.show ? (
+              <IonMenuToggle key={index} autoHide={false} >
                 <IonItem className={location.pathname === appPage.url ? 'selected' : ''} routerLink={appPage.url} routerDirection="none" lines="none" detail={false}>
                   { appPage.indicator > 0 ? <span className={"mm-indicator in-menu"} /> : '' }
                   <IonIcon slot="start" ios={appPage.iosIcon} md={appPage.mdIcon} />
@@ -169,7 +180,7 @@ const Menu: React.FC = () => {
                   })()}
                 </IonItem>
               </IonMenuToggle>
-            );
+            ) : false;
           })}
         </IonList>
         <IonList className={"menu-secondary-list"}>

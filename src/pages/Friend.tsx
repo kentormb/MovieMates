@@ -22,7 +22,7 @@ import { useDispatch } from "react-redux"
 const Friend: React.FC = () => {
     const { id } = useParams();
     const [userData, getUserData] = useState({name: '', username: '', icon: ''});
-    const history = useHistory()
+    const history = useHistory();
     const dispatch = useDispatch();
     const rootDispatcher = new RootDispatcher(dispatch);
 

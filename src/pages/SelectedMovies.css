@@ -25,6 +25,10 @@
     height: auto;
 }
 
+.selected_board .card .poster img{
+    min-height: auto;
+}
+
 .selected_board .card .content{
     height: 23px;
 }

@@ -8,15 +8,16 @@ import AccountSettings from './pages/AccountSettings';
 import React, {useEffect, useRef, useState} from 'react';
 import { IonRouterOutlet, IonSplitPane } from '@ionic/react';
 import { Redirect, Route } from 'react-router-dom';
-import { useAuth } from "./auth";
-import Top10 from "./pages/Top10";
+import {getCurrentUser, useAuth} from "./auth";
+import Suggestions from "./pages/Suggestions";
 import { StateProps, RootDispatcher } from './store/reducer';
 import { useSelector, useDispatch } from "react-redux"
+import {getIndicators, getMenuCounts} from "./components/Api";
 
 const App: React.FC = () => {
 
     const loggedIn = useAuth();
-    const [count, setCount] = useState(0);
+    const [timer, setTimer] = useState(1);
     const dispatch = useDispatch();
     const rootDispatcher = new RootDispatcher(dispatch);
 
@@ -24,50 +25,26 @@ const App: React.FC = () => {
         return state.indicators
     });
 
-
-    // useEffect(()=>{
-    //
-    //     const socket = new WebSocket('ws://138.197.181.62:8080/' + getCurrentUser().uid);
-    //     let st = false;
-    //     // socket.onopen = function() {
-    //     //     console.log('Opened connection');
-    //     // }
-    //     socket.onmessage = function(event) {
-    //         const result = JSON.parse(event.data).result;
-    //         if(result.menu && !st){
-    //             st = true
-    //             rootDispatcher.updateIndicators(result)
-    //         }
-    //         else if(!result.menu && st){
-    //             st = false
-    //             rootDispatcher.updateIndicators(result)
-    //         }
-    //     }
-    //
-    // },[]); // eslint-disable-line react-hooks/exhaustive-deps
-
     useInterval(() => {
+        getIndicators(getCurrentUser().uid).then((result) => {
+            console.log(result);
+            rootDispatcher.updateIndicators(result)
 
-        console.log('timer', count);
-        setCount(count+1);
-
-    }, 60000); //count > 0 ? 10000 : null);
+        });
+    }, timer > 0 ? 30000 : null);
 
     function useInterval(callback: any, delay:number|null) {
         const savedCallback = useRef();
-
         // Remember the latest function.
         useEffect(() => {
             savedCallback.current = callback;
         }, [callback]);
-
         // Set up the interval.
         useEffect(() => {
             function tick() {
                 // @ts-ignore
                 savedCallback.current();
             }
-
             if (delay !== null ) {
                 let id = setInterval(tick, delay);
                 return () => clearInterval(id);
@@ -75,10 +52,9 @@ const App: React.FC = () => {
         }, [delay]);
     }
 
-
     if(!loggedIn.loggedIn){
-        setCount(null)
-        return <Redirect to="/register"/>
+        setTimer(null)
+        window.location.href = '/login'
     }
     return (
       <IonSplitPane contentId="main">
@@ -89,7 +65,7 @@ const App: React.FC = () => {
             <Route path="/my/movies/view/:status" component={MyMovies} exact />
             <Route path="/my/friends" component={Friends} exact />
             <Route path="/my/friend/:id" component={Friend} exact />
-            <Route path="/my/top10" component={Top10} exact />
+            <Route path="/my/suggestions" component={Suggestions} exact />
             <Route path="/my/groups" component={Groups} exact />
             <Route path="/my/account" component={AccountSettings} exact />
             <Redirect from="/my" to="/my/movies" exact />
