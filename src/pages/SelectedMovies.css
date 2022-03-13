@@ -45,6 +45,7 @@
     height: 90%;
     height: calc(100% - 55px);
     width: 100%;
+    width: calc(100% - 10px);
 }
 
 .selected_board .card .button{
