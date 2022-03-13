@@ -87,18 +87,6 @@ export function updateUsersMovies(uid: string, mid: number, mstatus: number){
         .catch(error => console.warn(error));
 }
 
-export function getRandomAvatar(name){
-    //https://stackoverflow.com/questions/6150289/how-can-i-convert-an-image-into-base64-string-using-javascript
-    return fetch('https://eu.ui-avatars.com/api/?background=random&name='+name)
-        .then(response => response.blob())
-        .then(blob => new Promise((resolve, reject) => {
-            const reader = new FileReader()
-            reader.onloadend = () => resolve(reader.result)
-            reader.onerror = reject
-            reader.readAsDataURL(blob)
-        }))
-}
-
 export function getMenuCounts(uid: string){
     const token = getToken();
     const url = 'https://marios.com.gr/movies/api/?status=5&uid=' + uid + '&token=' + token;
@@ -106,7 +94,7 @@ export function getMenuCounts(uid: string){
     return fetch(url)
         .then(res => res.json())
         .then((result) => {
-            return {friends: result.results.friends, liked: result.results.liked, disliked: result.results.disliked, suggestions: result.results.suggestions};
+            return {friends: result.results.friends, groups: result.results.groups, liked: result.results.liked, disliked: result.results.disliked, suggestions: result.results.suggestions};
         })
         .catch(error => console.warn(error));
 }
@@ -251,6 +239,92 @@ export function getAllProviders(uid:string, page:number = 1){
     const token = getToken();
     const url = 'https://marios.com.gr/movies/api/?status=20&uid=' + uid + '&page=' + page + '&token=' + token;
     //console.log('accept friend request', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+            return result;
+        })
+        .catch(error => console.warn(error));
+}
+
+export function saveGroup(uid:string, name:string, friends:string){
+    const token = getToken();
+    const url = 'https://marios.com.gr/movies/api/?status=21&uid=' + uid + '&groupname=' + name + '&friends=' + friends + '&token=' + token;
+    //console.log('save group', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+            return result;
+        })
+        .catch(error => console.warn(error));
+}
+
+export function getGroups(uid:string){
+    const token = getToken();
+    const url = 'https://marios.com.gr/movies/api/?status=22&uid=' + uid + '&token=' + token;
+    //console.log('get group', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+            return result;
+        })
+        .catch(error => console.warn(error));
+}
+
+export function deleteGroup(uid: string, gid: number){
+
+    const token = getToken();
+    const url = 'https://marios.com.gr/movies/api/?status=23&gid=' + gid + '&uid=' + uid + '&token=' + token;
+    //console.log('add friend', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+        })
+        .catch(error => console.warn(error));
+}
+
+export function getGroupById(uid: string, gid: number){
+
+    const token = getToken();
+    const url = 'https://marios.com.gr/movies/api/?status=24&gid=' + gid + '&uid=' + uid + '&token=' + token;
+    //console.log('get freind by id', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+            return result;
+        })
+        .catch(error => console.warn(error));
+}
+
+export function getMatchedGroupedMovies(uid: string, gid: number){
+
+    const token = getToken();
+    const url = 'https://marios.com.gr/movies/api/?status=25&gid=' + gid + '&uid=' + uid + '&token=' + token;
+    //console.log('get matched grouped movies', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+            return result.results;
+        })
+        .catch(error => console.warn(error));
+}
+
+export function deleteGroupUser(uid: string, gid: number, fid: number){
+
+    const token = getToken();
+    const url = 'https://marios.com.gr/movies/api/?status=26&gid=' + gid + '&uid=' + uid + '&fid=' + fid + '&token=' + token;
+    //console.log('delete Group User', url);
+    return fetch(url)
+        .then(res => res.json())
+        .then((result) => {
+        })
+        .catch(error => console.warn(error));
+}
+
+export function addGroupFriends(uid:string, gid: number, friends:string){
+    const token = getToken();
+    const url = 'https://marios.com.gr/movies/api/?status=27&uid=' + uid + '&gid=' + gid + '&friends=' + friends + '&token=' + token;
+    //console.log('add Group Friends', url);
     return fetch(url)
         .then(res => res.json())
         .then((result) => {

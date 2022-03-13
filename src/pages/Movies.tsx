@@ -65,8 +65,8 @@ const Movies: React.FC = () => {
     }
 
     async function loadMoreProviders(e){
-        const theshold = 50;
-        if(e.currentTarget.scrollTop + e.currentTarget.offsetHeight + theshold > e.currentTarget.scrollHeight && scroll && !isInfiniteDisabled){
+        const threshold = 50;
+        if(e.currentTarget.scrollTop + e.currentTarget.offsetHeight + threshold > e.currentTarget.scrollHeight && scroll && !isInfiniteDisabled){
             scroll = false;
             pushData();
         }
@@ -74,13 +74,13 @@ const Movies: React.FC = () => {
     }
 
     const selectProvider = (ev, id) => {
-        let sp = selectedProviders.includes(id) ? selectedProviders.filter( (val) => val != id ) : [...selectedProviders, id]
+        let sp = selectedProviders.includes(id) ? selectedProviders.filter( (val) => val !== id ) : [...selectedProviders, id];
         ev.currentTarget.classList.toggle("selected");
-        setSelectedProviders(sp)
+        setSelectedProviders(sp);
     }
 
     const setAdultHandler = (value) => {
-        setAdult(value ? 1 : 0)
+        setAdult(value ? 1 : 0);
     }
 
     const saveOptions = () => {

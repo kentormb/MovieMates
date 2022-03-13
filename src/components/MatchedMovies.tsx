@@ -1,15 +1,16 @@
-import React, {useState} from "react";
-import {IonLoading, useIonViewDidEnter} from "@ionic/react";
+import React, {useEffect, useState} from "react";
+import {IonLoading, useIonViewDidEnter, useIonViewWillEnter} from "@ionic/react";
 import '../pages/SelectedMovies.css';
-import {getMatchedMovies, seenThisMovie} from "./Api";
+import {getMatchedGroupedMovies, getMatchedMovies, seenThisMovie} from "./Api";
 import {getCurrentUser} from "../auth";
 import {Card} from "./Card";
 
 interface Prop{
     id: number;
+    isGroup: boolean;
 }
 
-const SelectedMovies: React.FC<Prop> = ({id}) => {
+const SelectedMovies: React.FC<Prop> = ({id, isGroup}) => {
 
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -49,24 +50,29 @@ const SelectedMovies: React.FC<Prop> = ({id}) => {
             }
         })
     }
-
-    useIonViewDidEnter(() => {
-        getMatchedMovies(getCurrentUser().uid, id ).then((results) => {
-            setIsLoaded(true);
-            try {
-                let board = document.querySelector('#selected_board_m');
-                board.innerHTML = '';
-                for (const [index, value] of  Object.entries(results)) {
-                    const card = Card(+index,value, seenThis);
-                    board.append(card);
-                }
+    function getMovies(results){
+        setIsLoaded(true);
+        try {
+            let board = document.querySelector('#selected_board_m');
+            board.innerHTML = '';
+            for (const [index, value] of  Object.entries(results)) {
+                const card = Card(+index,value, seenThis);
+                board.append(card);
             }
-            catch (e) {
-                setIsLoaded(false);
-            }
+        }
+        catch (e) {
+            setIsLoaded(false);
+        }
+    }
+    useEffect(() => {
 
-        });
-    });
+        if(isGroup){
+            getMatchedGroupedMovies(getCurrentUser().uid, id ).then((results) => getMovies(results));
+        }
+        else{
+            getMatchedMovies(getCurrentUser().uid, id ).then((results) => getMovies(results));
+        }
+    },[]);
 
     if (!isLoaded) {
         return (<IonLoading isOpen/>);

@@ -27,7 +27,6 @@ export function Card(index,result,cb = null){
     poster.append(img);
 
     if(result.seen !== undefined){
-
         if(result.seen === 1){
             const seen = document.createElement('div');
             seen.setAttribute('class','seen-layer');

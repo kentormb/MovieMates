@@ -14,7 +14,6 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    border-radius: 3px;
     box-shadow: 0px 4px 4px 0px #8686861a;
     background-color: #000000;
     transform: translateX(-50%) translateY(-50%) scale(0.95);
@@ -25,6 +24,8 @@
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .card .poster{
@@ -314,6 +315,26 @@ ion-list.mm-list{
     width: 100%;
 }
 
+.swiper-slide .card img{
+    width: auto;
+    top: 3px;
+    position: relative;
+    max-width: 100%;
+    height: auto;
+    max-height: none;
+}
+
+.swiper-slide .card .content {
+    padding: 0px 10px;
+}
+
+.swiper-slide .selected_board .card .moreinfo{
+    top: 0;
+    width: 97vw;
+    height: 88vh;
+    height: calc(100vh - 100px);
+}
+
 .qr-img-btn{
     position: absolute;
     top: 20px;
@@ -596,4 +617,17 @@ body.dark .suggest-friends-list ul li {
     display: block;
     margin: 6px;
     text-align: center;
+}
+
+.not-my-group-item{
+    color: #bfbfbf;
+}
+
+.add-friends-button{
+    width: 100%;
+}
+
+.add-friends-button button{
+    padding: 19px;
+    background: #00000054!important;
 }

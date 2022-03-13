@@ -57,7 +57,6 @@ const Friends: React.FC = () => {
   function dismissSearchModal(){
     setShowModal(false);
     setSelectedFriend(0);
-    setShowModal(false);
     setFriendSearchList([]);
     setQrScanner(false);
   }
@@ -129,8 +128,8 @@ const Friends: React.FC = () => {
 
   function doRefresh(event: CustomEvent<RefresherEventDetail>) {
     getUserFriends().then(()=>{
-      getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number, suggestions: number})=>{
-        rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked, suggestions: mc.suggestions})})
+      getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, groups: number, liked: number, suggestions: number})=>{
+        rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, groups: mc.groups, liked: mc.liked, suggestions: mc.suggestions})})
       event.detail.complete()
     })
   }

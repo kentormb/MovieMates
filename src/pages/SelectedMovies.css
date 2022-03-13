@@ -53,24 +53,21 @@
     color: white;
 }
 
-.selected_board .card .button.disliked{
-    background-color: #324c36;
-}
-
+.selected_board .card .button.disliked,
 .selected_board .card .button.liked{
-    background-color: #3a2626;
+    background-color: #eaeaea33;
+    border-radius: 13px;
 }
 
 .selected_board .seen-btn{
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 3px;
+    left: 3px;
     height: auto;
-    padding: 0 5px;
+    padding: 4px 5px 2px;
     width: auto;
     background: #f9f9f940;
-    border-radius: 5px;
-    margin: 3px;
+    border-radius: 10px;
 }
 
 .selected_board .seen-layer{
@@ -95,4 +92,10 @@
 .selected_board .card.dis-likes .seen-layer{
     height: 90%;
     height: calc(100% - 32px);
+}
+
+.selected_board .card .action{
+    position: absolute;
+    top: 3px;
+    right: 3px;
 }

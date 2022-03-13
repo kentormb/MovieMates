@@ -47,6 +47,7 @@ const Menu: React.FC = () => {
 
   const location = useLocation();
   const [friendsCount, setFriendsCount] = useState(-1)
+  const [groupCount, setGroupCount] = useState(-1)
   const [suggestionsCount, setSuggestionsCount] = useState(-1)
   const [likedCount, setLikedCount] = useState(-1)
   const [dislikedCount, setDisLikedCount] = useState(-1)
@@ -91,8 +92,8 @@ const Menu: React.FC = () => {
       url: '/my/groups',
       iosIcon: peopleCircleOutline,
       mdIcon: peopleCircleSharp,
-      badge: -1,
-      indicator: -1,
+      badge: groupCount,
+      indicator: indicators.groups,
       show: true
     },
     {
@@ -135,9 +136,9 @@ const Menu: React.FC = () => {
 
   useEffect(()=>{
     const updateMenu = () => {
-      getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, liked: number, suggestions: number})=>{
+      getMenuCounts(getCurrentUser().uid).then((mc:{disliked: number, friends: number, groups: number, liked: number, suggestions: number})=>{
         if(mc){
-          rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, liked: mc.liked, suggestions: mc.suggestions})
+          rootDispatcher.updateMenu({disliked: mc.disliked, friends: mc.friends, groups: mc.groups, liked: mc.liked, suggestions: mc.suggestions})
         }
       })
     }
@@ -146,6 +147,7 @@ const Menu: React.FC = () => {
 
   useEffect(() => {
     setFriendsCount(menu.friends)
+    setGroupCount(menu.groups)
     setLikedCount(menu.liked)
     setDisLikedCount(menu.disliked)
     setSuggestionsCount(menu.suggestions)

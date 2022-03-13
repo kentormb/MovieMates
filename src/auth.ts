@@ -34,7 +34,7 @@ export function useAuthInit(){
                 auth = {loggedIn: true, userId: firebaseUser.uid, userEmail: firebaseUser.email};
 
                 getUser(firebaseUser.uid, firebaseUser.email).then((results) => {
-                    if(results.error === 0){
+                    if(results?.error === 0){
                         const user = {
                             username: results.result.username,
                             name: results.result.name,

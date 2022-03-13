@@ -54,7 +54,7 @@ const Friend: React.FC = () => {
               </IonToolbar>
           </IonHeader>
           <IonContent fullscreen>
-              <MatchedMovies id={id}/>
+              <MatchedMovies id={id} isGroup={false} />
           </IonContent>
       </IonPage>
   );

@@ -99,10 +99,10 @@ const SelectedMovies: React.FC<Prop> = ({status}) => {
                     const action = document.createElement('div');
                     action.setAttribute('class','action');
 
-                    const button = document.createElement('div');
+                    const button = document.createElement('img');
 
                     if(status === 'liked'){
-                        button.innerText = 'I don\'t like this';
+                        button.src = '/assets/icon/dislike.png';
                         button.setAttribute('class','button liked');
                         button.addEventListener('click', ()=>{
                             // @ts-ignore
@@ -116,7 +116,7 @@ const SelectedMovies: React.FC<Prop> = ({status}) => {
                         })
                     }
                     else{
-                        button.innerText = 'I like this';
+                        button.src = '/assets/icon/like.png';
                         button.setAttribute('class','button disliked');
                         button.addEventListener('click', ()=>{
                             // @ts-ignore

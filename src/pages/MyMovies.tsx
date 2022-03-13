@@ -36,7 +36,6 @@ const MyMovies: React.FC = () => {
             </IonTitle>
         </IonToolbar>
         </IonHeader>
-
         <SelectedMovies status={status}/>
     </IonPage>
   );

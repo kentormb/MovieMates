@@ -5,6 +5,7 @@ export enum ActionType {
     UPDATE_MENU = 'UPDATE_MENU',
     UPDATE_MENU_DISLIKED = 'UPDATE_MENU_DISLIKED',
     UPDATE_MENU_FRIENDS = 'UPDATE_MENU_FRIENDS',
+    UPDATE_MENU_GROUPS = 'UPDATE_MENU_GROUPS',
     UPDATE_MENU_FRIENDS_INC = 'UPDATE_MENU_FRIENDS_INC',
     UPDATE_MENU_FRIENDS_DEC = 'UPDATE_MENU_FRIENDS_DEC',
     UPDATE_MENU_LIKES_INC = 'UPDATE_MENU_LIKES_INC',
@@ -30,7 +31,7 @@ export enum ActionType {
 }
 
 export const initialState = {
-    menu: {disliked: 0, friends: 0, liked: 0, suggestions: 0},
+    menu: {disliked: 0, friends: 0, groups: 0,liked: 0, suggestions: 0},
     user: { username: '', name: '', photo: '', qr: ''},
     friends: [],
     categories: [],
@@ -39,13 +40,12 @@ export const initialState = {
     years: 10,
     adult: 0,
     darkMode: false,
-    indicators : {menu: false, friend_request: 0, suggestions: 0},
+    indicators : {menu: false, friend_request: 0, suggestions: 0, groups: 0},
     settings: {slides: true, buttons: false}
-
 }
 
 export interface StateProps {
-    menu: {disliked: number, friends: number, liked: number, suggestions: number},
+    menu: {disliked: number, friends: number, groups: number, liked: number, suggestions: number},
     user: { username: string, name: string, photo: string, qr: string},
     friends: [],
     categories: [],
@@ -54,7 +54,7 @@ export interface StateProps {
     years: number,
     adult: number,
     darkMode: boolean,
-    indicators : {menu: boolean, friend_request: number, suggestions: number},
+    indicators : {menu: boolean, friend_request: number, suggestions: number, groups: number},
     settings: {slides: boolean, buttons: boolean}
 }
 
@@ -68,52 +68,57 @@ const reducer = (state = initialState, action) => {
         case ActionType.UPDATE_MENU:
             return {
                 ...state,
-                menu: {disliked: action.payload.disliked, friends: action.payload.friends, liked: action.payload.liked, suggestions: action.payload.suggestions}
+                menu: {disliked: action.payload.disliked, friends: action.payload.friends, groups: action.payload.groups, liked: action.payload.liked, suggestions: action.payload.suggestions}
             }
         case ActionType.UPDATE_MENU_DISLIKED:
             return {
                 ...state,
-                menu: {disliked: action.payload.disliked, friends: state.menu.friends, liked: state.menu.liked, suggestions: state.menu.suggestions}
+                menu: {disliked: action.payload.disliked, friends: state.menu.friends, groups: state.menu.groups, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_FRIENDS:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: action.payload.friends, liked: state.menu.liked, suggestions: state.menu.suggestions}
+                menu: {disliked: state.menu.disliked, friends: action.payload.friends, groups: state.menu.groups, liked: state.menu.liked, suggestions: state.menu.suggestions}
+            }
+        case ActionType.UPDATE_MENU_GROUPS:
+            return {
+                ...state,
+                menu: {disliked: state.menu.disliked, friends: state.menu.friends, groups: action.payload.groups, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_FRIENDS_INC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: state.menu.friends + 1, liked: state.menu.liked, suggestions: state.menu.suggestions}
+                menu: {disliked: state.menu.disliked, friends: state.menu.friends + 1, groups: state.menu.groups, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_FRIENDS_DEC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: state.menu.friends - 1, liked: state.menu.liked, suggestions: state.menu.suggestions}
+                menu: {disliked: state.menu.disliked, friends: state.menu.friends - 1, groups: state.menu.groups, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_LIKES_INC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: state.menu.friends, liked: state.menu.liked + 1, suggestions: state.menu.suggestions}
+                menu: {disliked: state.menu.disliked, friends: state.menu.friends, groups: state.menu.groups, liked: state.menu.liked + 1, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_LIKES_DEC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: state.menu.friends, liked: state.menu.liked - 1, suggestions: state.menu.suggestions}
+                menu: {disliked: state.menu.disliked, friends: state.menu.friends, groups: state.menu.groups, liked: state.menu.liked - 1, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_DISLIKES_INC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked + 1, friends: state.menu.friends, liked: state.menu.liked, suggestions: state.menu.suggestions}
+                menu: {disliked: state.menu.disliked + 1, friends: state.menu.friends, groups: state.menu.groups, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_DISLIKES_DEC:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked - 1, friends: state.menu.friends, liked: state.menu.liked, suggestions: state.menu.suggestions}
+                menu: {disliked: state.menu.disliked - 1, friends: state.menu.friends, groups: state.menu.groups, liked: state.menu.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_MENU_LIKED:
             return {
                 ...state,
-                menu: {disliked: state.menu.disliked, friends: state.menu.friends, liked: action.payload.liked, suggestions: state.menu.suggestions}
+                menu: {disliked: state.menu.disliked, friends: state.menu.friends, groups: state.menu.groups, liked: action.payload.liked, suggestions: state.menu.suggestions}
             }
         case ActionType.UPDATE_USER:
             return {
@@ -158,17 +163,17 @@ const reducer = (state = initialState, action) => {
         case ActionType.UPDATE_INDICATORS_MENU:
             return {
                 ...state,
-                indicators: {menu: action.payload, friend_request: state.indicators.friend_request, suggestions: state.indicators.suggestions}
+                indicators: {menu: action.payload, friend_request: state.indicators.friend_request, suggestions: state.indicators.suggestions, groups: state.indicators.groups}
             }
         case ActionType.UPDATE_INDICATORS_FRIEND_REQUESTS:
             return {
                 ...state,
-                indicators: {friend_request: action.payload, menu: state.indicators.menu, suggestions: state.indicators.suggestions}
+                indicators: {friend_request: action.payload, menu: state.indicators.menu, suggestions: state.indicators.suggestions, groups: state.indicators.groups}
             }
         case ActionType.UPDATE_INDICATORS_SUGGESTIONS:
             return {
                 ...state,
-                indicators: {suggestions: action.payload, menu: state.indicators.menu, friend_request: state.indicators.friend_request}
+                indicators: {suggestions: action.payload, menu: state.indicators.menu, friend_request: state.indicators.friend_request, groups: state.indicators.groups}
             }
         case ActionType.UPDATE_SETTINGS:
             return {

@@ -3,6 +3,7 @@ import Movies from "./pages/Movies";
 import MyMovies from './pages/MyMovies';
 import Friend from './pages/Friend';
 import Groups from './pages/Groups';
+import Group from './pages/Group';
 import Friends from "./pages/Friends";
 import AccountSettings from './pages/AccountSettings';
 import React, {useEffect, useRef, useState} from 'react';
@@ -27,9 +28,8 @@ const App: React.FC = () => {
 
     useInterval(() => {
         getIndicators(getCurrentUser().uid).then((result) => {
-            console.log(result);
+            //console.log(result);
             rootDispatcher.updateIndicators(result)
-
         });
     }, timer > 0 ? 30000 : null);
 
@@ -67,6 +67,7 @@ const App: React.FC = () => {
             <Route path="/my/friend/:id" component={Friend} exact />
             <Route path="/my/suggestions" component={Suggestions} exact />
             <Route path="/my/groups" component={Groups} exact />
+            <Route path="/my/group/:id" component={Group} exact />
             <Route path="/my/account" component={AccountSettings} exact />
             <Redirect from="/my" to="/my/movies" exact />
         </IonRouterOutlet>
