@@ -60,7 +60,7 @@ export function getCurrentUser(){
 
 export function requestOptions(){
     const token = getAccessToken();
-    const domain = 'https://marios.com.gr/movies/api';
+    const domain = 'https://api.mm.tediousapp.xyz';
     const options = {
         method: 'GET',
         //headers: { 'Authorization': 'Bearer ' + token }
