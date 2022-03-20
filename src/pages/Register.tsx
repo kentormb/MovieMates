@@ -1,13 +1,9 @@
 import {
     IonButton,
-    IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle,
-    IonContent,
-    IonHeader, IonImg, IonInput, IonItem, IonLabel,
+    IonCard, IonCardContent, IonCardHeader, IonCardTitle,
+    IonContent, IonImg, IonInput, IonItem, IonLabel,
     IonList, IonLoading,
-    IonMenuButton,
     IonPage, IonText,
-    IonTitle,
-    IonToolbar
 } from '@ionic/react';
 import React, {useState} from 'react';
 import './Page.css';

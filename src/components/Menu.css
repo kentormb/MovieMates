@@ -127,3 +127,7 @@ ion-menu .menu-list-header.no-name{
   position: relative;
   top: 10px;
 }
+
+ion-menu.show-menu{
+  opacity: 0.97;
+}

@@ -35,7 +35,7 @@ const Friend: React.FC = () => {
     }
 
   useIonViewWillEnter(()=>{
-      getFriendById(id).then((result)=>{
+      getFriendById(getCurrentUser().uid, id).then((result)=>{
           getUserData({name: result.result.name, username: result.result.username, icon: result.result.icon});
       })
   });

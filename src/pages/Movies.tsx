@@ -177,7 +177,7 @@ const Movies: React.FC = () => {
                             Filters
                         </IonTitle>
                         <IonButtons slot="end">
-                            <IonButton color="success" onClick={saveOptions} strong>Done</IonButton>
+                            <IonButton color="success" onClick={saveOptions} strong>Save</IonButton>
                         </IonButtons>
                     </IonToolbar>
                 </IonHeader>

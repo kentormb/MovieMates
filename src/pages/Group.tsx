@@ -1,9 +1,9 @@
 import {
     IonAvatar,
-    IonBackButton, IonBadge, IonButton,
+    IonBackButton, IonButton,
     IonButtons, IonCheckbox,
     IonContent,
-    IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemSliding, IonLabel, IonList, IonModal,
+    IonHeader, IonIcon, IonItem, IonLabel, IonList, IonModal,
     IonPage, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonSlide, IonSlides,
     IonTitle,
     IonToolbar, useIonViewWillEnter
@@ -12,14 +12,11 @@ import React, {useRef, useState} from 'react';
 import { useParams } from 'react-router';
 import './Page.css';
 import MatchedMovies from '../components/MatchedMovies';
-import {deleteGroup, getGroupById, deleteGroupUser, addGroupFriends, getFriends, saveGroup} from "../components/Api";
+import {deleteGroup, getGroupById, deleteGroupUser, addGroupFriends, getFriends} from "../components/Api";
 import {trashOutline, trashSharp} from "ionicons/icons";
 import { useHistory } from 'react-router-dom';
 import {getCurrentUser} from "../auth";
 import {RefresherEventDetail} from "@ionic/core";
-import {RootDispatcher} from "../store/reducer";
-import { useDispatch } from "react-redux"
-
 
 const Group: React.FC = () => {
     const { id } = useParams();
@@ -32,8 +29,6 @@ const Group: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedFriends, setSelectedFriends] = useState([]);
     const [friendList, setFriendList] = useState([]);
-    const dispatch = useDispatch();
-    const rootDispatcher = new RootDispatcher(dispatch);
 
     const handleSegmentChange = (e: any) => {
         setValue(e.detail.value);
@@ -139,7 +134,7 @@ const Group: React.FC = () => {
                                       <IonAvatar className="friend-avatar">
                                           <img src={item.icon} alt=''/>
                                       </IonAvatar>
-                                      <IonLabel>{item.username} {item.name!=='' ? '(' + item.name + ')' : ''}</IonLabel>
+                                      <IonLabel>{item.username} {item.name!=='' && item.name!==null ? '(' + item.name + ')' : ''}</IonLabel>
                                       {isCreator ? <IonIcon onClick={()=>{removeUserFromGroup(item.id)}} size="medium" ios={trashSharp} md={trashOutline}/> : ''}
                                   </IonItem>
                               )}

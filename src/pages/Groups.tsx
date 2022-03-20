@@ -2,7 +2,7 @@ import {
     IonAvatar,
     IonButton,
     IonButtons,
-    IonCard, IonCheckbox,
+    IonCheckbox,
     IonContent, IonFab, IonFabButton,
     IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonLabel, IonList,
     IonMenuButton, IonModal,
@@ -10,14 +10,12 @@ import {
     IonTitle, IonToast,
     IonToolbar, useIonViewWillEnter
 } from '@ionic/react';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import './Page.css';
 import {add} from "ionicons/icons";
-import {getFriends, saveGroup, getGroups, searchFriend, getMenuCounts} from "../components/Api";
+import {getFriends, saveGroup, getGroups} from "../components/Api";
 import {getCurrentUser} from "../auth";
 import {RefresherEventDetail} from "@ionic/core";
-import {RootDispatcher} from "../store/reducer";
-import { useDispatch } from "react-redux"
 
 const Groups: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
@@ -28,8 +26,6 @@ const Groups: React.FC = () => {
     const [friendList, setFriendList] = useState([]);
     const [selectedFriends, setSelectedFriends] = useState([]);
     const [groups, setGroups] =  useState([]);
-    const dispatch = useDispatch();
-    const rootDispatcher = new RootDispatcher(dispatch);
 
     function doRefresh(event: CustomEvent<RefresherEventDetail>) {
         getData()
@@ -97,15 +93,13 @@ const Groups: React.FC = () => {
             <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
                 <IonRefresherContent/>
             </IonRefresher>
-            <IonCard>
-                <IonList>
-                    {groups.map((item) =>
-                        <IonItem key={item.id} routerLink={'/my/group/' + item.id} className={!item.isCreator ? 'not-my-group-item' : ''}>
-                            <IonLabel>{item.groupName} ({item.group_count + (!item.isCreator)})</IonLabel>
-                        </IonItem>
-                    )}
-                </IonList>
-            </IonCard>
+            <IonList>
+                {groups.map((item) =>
+                    <IonItem key={item.id} routerLink={'/my/group/' + item.id} className={!item.isCreator ? 'not-my-group-item' : ''}>
+                        <IonLabel>{item.groupName} ({item.group_count + (!item.isCreator)})</IonLabel>
+                    </IonItem>
+                )}
+            </IonList>
             <IonFab vertical="bottom" horizontal="end" slot="fixed">
                 <IonFabButton  onClick={() => createGroup()}>
                     <IonIcon icon={add} />

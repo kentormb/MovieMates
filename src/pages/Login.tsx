@@ -1,20 +1,14 @@
 import {
-    IonButton,
-    IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle,
-    IonContent,
-    IonHeader, IonImg, IonInput, IonItem, IonLabel,
+    IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle,
+    IonContent, IonImg, IonInput, IonItem, IonLabel,
     IonList, IonLoading,
-    IonMenuButton,
-    IonPage, IonText, IonThumbnail,
-    IonTitle,
-    IonToolbar
+    IonPage, IonText
 } from '@ionic/react';
 import React, {useState} from 'react';
 import './Page.css';
 import {Redirect} from "react-router";
 import { useAuth } from '../auth';
 import { auth } from '../firebase';
-import {image} from "ionicons/icons";
 
 const Login: React.FC = () => {
 
@@ -24,10 +18,15 @@ const Login: React.FC = () => {
     const [password, setPassword] = useState('');
     const [status, setStatus] = useState({error:false, loading: false, message: ''});
 
-    const logginLandle = async () => {
+    const loginHandle = async () => {
         try {
-            setStatus({error:false, loading: true, message: ''});
             await auth.signInWithEmailAndPassword(email, password);
+            if(!loggedIn.loggedIn){
+                setStatus({error:true, loading: false, message: 'User does not exists'});
+            }
+            else{
+                setStatus({error:false, loading: false, message: ''});
+            }
         }
         catch (error){
             setStatus({error:true, loading: false, message: error.message});
@@ -57,7 +56,7 @@ const Login: React.FC = () => {
                           </IonItem>
                       </IonList>
                       { status.error && <IonText color="danger">{status.message}</IonText> }
-                      <IonButton expand="block" onClick={ logginLandle }>
+                      <IonButton expand="block" onClick={ loginHandle }>
                           Login
                       </IonButton>
                       <IonButton expand="block" fill="clear" routerLink="/register">Register</IonButton>

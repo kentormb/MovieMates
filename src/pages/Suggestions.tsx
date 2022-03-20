@@ -1,8 +1,6 @@
-import {IonButtons, IonCard, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar} from '@ionic/react';
+import {IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import React, {useEffect} from 'react';
 import './Page.css'
-import {RootDispatcher} from "../store/reducer";
-import {useDispatch} from "react-redux";
 import {getSuggestedMovies, updateUsersMovies} from "../components/Api";
 import {getCurrentUser} from "../auth";
 import {Card} from "../components/Card";
@@ -10,8 +8,8 @@ import { useHistory } from "react-router-dom";
 
 const Suggestions: React.FC = () => {
 
-    const dispatch = useDispatch();
-    const rootDispatcher = new RootDispatcher(dispatch);
+    // const dispatch = useDispatch();
+    // const rootDispatcher = new RootDispatcher(dispatch);
     const history = useHistory();
 
     useEffect(() => {

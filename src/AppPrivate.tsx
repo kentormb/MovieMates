@@ -13,7 +13,7 @@ import {getCurrentUser, useAuth} from "./auth";
 import Suggestions from "./pages/Suggestions";
 import { StateProps, RootDispatcher } from './store/reducer';
 import { useSelector, useDispatch } from "react-redux"
-import {getIndicators, getMenuCounts} from "./components/Api";
+import {getIndicators} from "./components/Api";
 
 const App: React.FC = () => {
 

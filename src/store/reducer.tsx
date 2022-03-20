@@ -32,7 +32,7 @@ export enum ActionType {
 
 export const initialState = {
     menu: {disliked: 0, friends: 0, groups: 0,liked: 0, suggestions: 0},
-    user: { username: '', name: '', photo: '', qr: ''},
+    user: { username: '', name: '', photo: '', qr: '', birthday: '', token: ''},
     friends: [],
     categories: [],
     selectedProviders: [],
@@ -46,7 +46,7 @@ export const initialState = {
 
 export interface StateProps {
     menu: {disliked: number, friends: number, groups: number, liked: number, suggestions: number},
-    user: { username: string, name: string, photo: string, qr: string},
+    user: { username: string, name: string, photo: string, qr: string, birthday: string, token: string},
     friends: [],
     categories: [],
     selectedProviders: [],
@@ -123,7 +123,7 @@ const reducer = (state = initialState, action) => {
         case ActionType.UPDATE_USER:
             return {
                 ...state,
-                user: { username: action.payload.username, name: action.payload.name, photo: action.payload.photo, qr: action.payload.qr}
+                user: { username: action.payload.username, name: action.payload.name, photo: action.payload.photo, qr: action.payload.qr, birthday: action.payload.birthday, token: action.payload.token}
             }
         case ActionType.UPDATE_FRIENDS:
             return {

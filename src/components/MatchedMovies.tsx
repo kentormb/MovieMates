@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {IonLoading, useIonViewDidEnter, useIonViewWillEnter} from "@ionic/react";
+import {IonLoading} from "@ionic/react";
 import '../pages/SelectedMovies.css';
 import {getMatchedGroupedMovies, getMatchedMovies, seenThisMovie} from "./Api";
 import {getCurrentUser} from "../auth";
@@ -72,7 +72,7 @@ const SelectedMovies: React.FC<Prop> = ({id, isGroup}) => {
         else{
             getMatchedMovies(getCurrentUser().uid, id ).then((results) => getMovies(results));
         }
-    },[]);
+    },[]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!isLoaded) {
         return (<IonLoading isOpen/>);

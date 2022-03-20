@@ -62,7 +62,7 @@ const Friends: React.FC = () => {
   }
 
   function acceptRequest(fid:number, status: boolean = true, key: number){
-    acceptFriendRequest(fid,status,).then((result)=>{
+    acceptFriendRequest(getCurrentUser().uid, fid,status,).then((result)=>{
       if(result.error === 0){
         setFriendList(friendList.concat(reqFriendList.filter(item => item.id === key )))
         setReqFriendList(reqFriendList.filter(item => item.id !== key))
@@ -182,7 +182,7 @@ const Friends: React.FC = () => {
                     <IonAvatar className="friend-avatar">
                       <img src={item.icon} alt=''/>
                     </IonAvatar>
-                    <IonLabel>{item.username} {item.name!=='' ? '(' + item.name + ')' : ''}</IonLabel>
+                    <IonLabel>{item.username} {item.name!=='' && item.name!==null ? '(' + item.name + ')' : ''}</IonLabel>
                     {item.matches !== 0 ? <span className={"friends-matches-badge"}>{item.matches}</span> : ''}
                   </IonItem>
                 )}

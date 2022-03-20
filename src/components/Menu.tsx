@@ -22,7 +22,7 @@ import {
   peopleCircleOutline,
   thumbsUpSharp,
   thumbsDownSharp,
-  qrCodeSharp, settingsOutline, settingsSharp, thumbsUp, thumbsDown, happySharp, happyOutline
+  qrCodeSharp, settingsOutline, settingsSharp, thumbsUp, thumbsDown, happySharp, happyOutline, moonOutline
 } from 'ionicons/icons';
 import './Menu.css';
 import {auth} from '../firebase';
@@ -157,7 +157,6 @@ const Menu: React.FC = () => {
     <IonMenu contentId="main" type="overlay">
       <IonContent>
         <IonList id="inbox-list">
-
           <IonAvatar className="menu-avatar">
             <IonImg src={user?.photo} alt="" />
           </IonAvatar>
@@ -187,6 +186,7 @@ const Menu: React.FC = () => {
         </IonList>
         <IonList className={"menu-secondary-list"}>
           <IonItem>
+            <IonIcon slot="start" ios={moonOutline} md={moonOutline} />
             <IonLabel className={"mm-bold"}>Dark mode</IonLabel>
             <IonToggle
                 className={"dark-mode-btn"}

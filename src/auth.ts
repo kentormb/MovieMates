@@ -4,7 +4,6 @@ import {getUser} from "./components/Api";
 import { Dispatch } from "redux"
 import { useDispatch } from "react-redux"
 import {RootDispatcher} from "./store/reducer";
-
 interface Auth{
     loggedIn: boolean;
     userId?: string;
@@ -32,16 +31,19 @@ export function useAuthInit(){
             let auth = {loggedIn: false, userId: '', userEmail: ''};
             if(firebaseUser){
                 auth = {loggedIn: true, userId: firebaseUser.uid, userEmail: firebaseUser.email};
+                const accessToken = getAccessToken();
 
                 getUser(firebaseUser.uid, firebaseUser.email).then((results) => {
                     if(results?.error === 0){
-                        const user = {
+                        const u = {
                             username: results.result.username,
                             name: results.result.name,
                             photo: results.result.icon,
-                            qr: results.result.qr
+                            qr: results.result.qr,
+                            birthday: results.result.birthday,
+                            token: accessToken
                         }
-                        rootDispatcher.updateUser(user)
+                        rootDispatcher.updateUser(u)
                     }
                 });
             }
@@ -56,7 +58,47 @@ export function getCurrentUser(){
     return {uid: firebaseAuth.currentUser.uid, email: firebaseAuth.currentUser.email}
 }
 
-export function getToken(){
-    const token = 'sJHxwTjXkUqrMIEmLhACpe1mW6Fy2r6njDNjKJzWe9WjtvHYCD6tpsLyZTPAYJNnIrdOpjO2nI65EHfa7MBK1x7apflambt44XG';
+export function requestOptions(){
+    const token = getAccessToken();
+    const domain = 'https://marios.com.gr/movies/api';
+    const options = {
+        method: 'GET',
+        //headers: { 'Authorization': 'Bearer ' + token }
+    };
+    return {token: token, domain: domain, options: options};
+}
+
+export function createAccessToken(){
+    const jwt  =  require('jsonwebtoken');
+    const uid = getCurrentUser().uid
+    const key = "mm2563";
+    const  expiresIn  =  24  *  60  *  60;
+    const token = jwt.sign({ id: uid }, key, {
+        expiresIn:  expiresIn
+    });
+    localStorage.setItem('accessToken', token);
     return token;
+}
+
+export function validateAccessToken(token){
+    const jwt  =  require('jsonwebtoken');
+    const key = "mm2563";
+    try {
+        let decoded = jwt.verify(token, key);
+        let now = +(new Date().getTime() / 1000).toFixed(0)
+        if(decoded.exp - now < 600){
+            return false
+        }
+    } catch(err) {
+        return false
+    }
+    return true
+}
+
+export function getAccessToken(){
+    let token = localStorage.getItem('accessToken');
+    if(!token || !validateAccessToken(token)){
+        token = createAccessToken();
+    }
+    return token
 }

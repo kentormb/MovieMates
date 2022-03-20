@@ -94,7 +94,7 @@ export function Card(index,result,cb = null){
     moreinfo.style.display = 'none';
     moreinfo.addEventListener('click', (e) => {
         let close = true;
-        e.composedPath().map((el)=>{
+        e.composedPath().forEach((el)=>{
             // @ts-ignore
             if(el.className === 'providers nomove'){
                 close = false;
@@ -154,7 +154,7 @@ export function Card(index,result,cb = null){
     overview.innerText = '' + result.description;
     moreinfo.append(overview);
 
-    if(result.trailer !== ''){
+    if(result.trailer){
         const trailer = document.createElement('div');
         trailer.setAttribute('class','trailer');
         const a = document.createElement('a');
@@ -202,7 +202,7 @@ export function Card(index,result,cb = null){
     provider_lang.addEventListener('click', (e)=>{
         if(provider_lang_container.style.display === ''){
             provider_lang_container.innerHTML = '';
-            Object.keys(providersList).map((lng)=>{
+            Object.keys(providersList).forEach((lng)=>{
                 let l = document.createElement('span');
                 l.setAttribute('class', 'nomove');
                 l.innerHTML = lng;
@@ -230,7 +230,7 @@ export function Card(index,result,cb = null){
                     }
                     provider_container.innerHTML = '';
                     if(prov_list.length > 0) {
-                        prov_list.map((l) => {
+                        prov_list.forEach((l) => {
                             let i = document.createElement('img');
                             i.src = 'https://image.tmdb.org/t/p/original' + l.path;
                             i.setAttribute('class', 'nomove');
@@ -255,7 +255,7 @@ export function Card(index,result,cb = null){
     provider_type.addEventListener('click', (e)=>{
         if(provider_type_container.style.display === ''){
             provider_type_container.innerHTML = '';
-            Object.keys(providersList[selectedLang]).map((type)=>{
+            Object.keys(providersList[selectedLang]).forEach((type)=>{
                 let tp = document.createElement('span');
                 tp.setAttribute('class', 'nomove');
                 tp.innerHTML = type;
@@ -274,7 +274,7 @@ export function Card(index,result,cb = null){
                     }
                     provider_container.innerHTML = '';
                     if(prov_list.length > 0) {
-                        prov_list.map((l) => {
+                        prov_list.forEach((l) => {
                             let i = document.createElement('img');
                             i.src = 'https://image.tmdb.org/t/p/original' + l.path;
                             i.setAttribute('class', 'nomove');
@@ -308,7 +308,7 @@ export function Card(index,result,cb = null){
                 getProviders(getCurrentUser().uid, result.movieId).then((res)=>{
                     if(res.error === 0){
                         providersList = [];
-                        res.results.map((p)=>{
+                        res.results.forEach((p)=>{
                             if(!providersList[p.lang]){
                                 providersList[p.lang] = [];
                             }
@@ -331,7 +331,7 @@ export function Card(index,result,cb = null){
 
                                 provider_lang_label.innerHTML = selectedLang = first_lang;
                                 provider_type_label.innerHTML = selectedType = first_type;
-                                prov_list.map((l)=>{
+                                prov_list.forEach((l)=>{
                                     let i = document.createElement('img');
                                     i.src = 'https://image.tmdb.org/t/p/original' + l.path;
                                     i.setAttribute('class','nomove');
