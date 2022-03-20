@@ -1,5 +1,5 @@
 {
-  "appId": "movie.mates.app",
+  "appId": "xyz.tediousapp.mm",
   "appName": "MovieMates",
   "bundledWebRuntime": false,
   "npmClient": "npm",
@@ -9,9 +9,5 @@
       "launchShowDuration": 0
     }
   },
-  "cordova": {
-    "server": {
-      "url": "http://192.168.2.5:8100"
-    }
-  }
+  "cordova": {}
 }
