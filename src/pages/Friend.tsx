@@ -1,4 +1,5 @@
 import {
+    IonAlert,
     IonBackButton, IonButton,
     IonButtons,
     IonContent,
@@ -25,6 +26,7 @@ const Friend: React.FC = () => {
     const history = useHistory();
     const dispatch = useDispatch();
     const rootDispatcher = new RootDispatcher(dispatch);
+    const [showAlert, setShowAlert] = useState(false);
 
     function deleteFriendHandle(id: number) {
         deleteFriend(getCurrentUser().uid, id).then(()=>{
@@ -47,13 +49,32 @@ const Friend: React.FC = () => {
                       <IonBackButton />
                   </IonButtons>
                   <IonTitle>{userData.name ? userData.name  : userData.username}</IonTitle>
-                  <IonButton  slot="end" onClick={ () => { deleteFriendHandle(id) }} color="medium">
+                  <IonButton  slot="end" onClick={ () => { setShowAlert(true) }} color="medium">
                       <IonIcon ios={trashSharp} md={trashOutline}/>
                   </IonButton>
               </IonToolbar>
           </IonHeader>
           <IonContent fullscreen>
               <MatchedMovies id={id} isGroup={false} />
+              <IonAlert
+                  isOpen={showAlert}
+                  onDidDismiss={() => setShowAlert(false)}
+                  header={'Are you sure?'}
+                  message={'You are going to delete this friend'}
+                  buttons={[
+                      {
+                          text: 'Cancel',
+                          role: 'cancel',
+                          cssClass: 'secondary'
+                      },
+                      {
+                          text: 'Delete',
+                          handler: () => {
+                              deleteFriendHandle(id)
+                          }
+                      }
+                  ]}
+              />
           </IonContent>
       </IonPage>
   );

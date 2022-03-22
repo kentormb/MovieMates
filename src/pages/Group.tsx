@@ -1,4 +1,5 @@
 import {
+    IonAlert,
     IonAvatar,
     IonBackButton, IonButton,
     IonButtons, IonCheckbox,
@@ -28,6 +29,7 @@ const Group: React.FC = () => {
     const [showModalFriends, setShowModalFriends] = useState(false);
     const [selectedFriends, setSelectedFriends] = useState([]);
     const [friendList, setFriendList] = useState([]);
+    const [showAlert, setShowAlert] = useState(false);
 
     function doRefresh(event: CustomEvent<RefresherEventDetail>) {
         getData()
@@ -96,7 +98,7 @@ const Group: React.FC = () => {
                   <IonButton  slot="end" color="dark" onClick={ () => setShowModalFriends(true) }>
                       <IonIcon icon={peopleOutline} slot="icon-only"/> {users.length ? ' ('+users.length+')' : ''}
                   </IonButton>
-                  <IonButton  slot="end" onClick={ () => { deleteGroupHandle(id) }} color="medium">
+                  <IonButton  slot="end" onClick={ () => { setShowAlert(true) }} color="medium">
                       <IonIcon ios={trashSharp} md={trashOutline}/>
                   </IonButton>
               </IonToolbar>
@@ -164,6 +166,25 @@ const Group: React.FC = () => {
                   </IonContent>
                   <IonButton onClick={()=>saveGroupHandler()}>Save</IonButton>
               </IonModal>
+              <IonAlert
+                  isOpen={showAlert}
+                  onDidDismiss={() => setShowAlert(false)}
+                  header={'Are you sure?'}
+                  message={'You are going to delete this group'}
+                  buttons={[
+                      {
+                          text: 'Cancel',
+                          role: 'cancel',
+                          cssClass: 'secondary'
+                      },
+                      {
+                          text: 'Delete',
+                          handler: () => {
+                              deleteGroupHandle(id)
+                          }
+                      }
+                  ]}
+              />
           </IonContent>
       </IonPage>
   );
