@@ -406,19 +406,20 @@ ion-list.mm-list{
     position: fixed;
     width: 62px;
     height: 65px;
-    background: url(/assets/thumbs_spring.png);
+    background: url(/assets/thumbs2_spring.png);
     background-size: cover;
     background-repeat: no-repeat;
     z-index: 9;
-    top: 70%;
+    bottom: 30px;
 }
 
 #thumbs_down{
-    left: 0;
-
+    left: 50%;
+    margin-left: -70px;
 }
 #thumbs_up{
-    right: 0;
+    right: 50%;
+    margin-right: -70px;
     background-position: right;
 }
 
