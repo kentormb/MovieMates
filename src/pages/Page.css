@@ -410,7 +410,7 @@ ion-list.mm-list{
     background-size: cover;
     background-repeat: no-repeat;
     z-index: 9;
-    bottom: 30px;
+    bottom: 15px;
 }
 
 #thumbs_down{
