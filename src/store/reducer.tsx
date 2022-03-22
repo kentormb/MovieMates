@@ -39,7 +39,7 @@ export const initialState = {
     orderBy: 1,
     years: 10,
     adult: 0,
-    darkMode: false,
+    darkMode: true,
     indicators : {menu: false, friend_request: 0, suggestions: 0, groups: 0},
     settings: {slides: true, buttons: false}
 }

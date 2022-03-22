@@ -6,7 +6,7 @@ import {IonApp, IonLoading, IonRouterOutlet} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 import {AuthContext, useAuthInit} from './auth';
-import {RootDispatcher} from './store/reducer';
+import {initialState, RootDispatcher} from './store/reducer';
 import { useDispatch } from "react-redux"
 import {Plugins} from "@capacitor/core";
 import Reset from "./pages/Reset";
@@ -22,10 +22,12 @@ const App: React.FC = () => {
   const rootDispatcher = new RootDispatcher(dispatch);
 
   Storage.get({ key: 'darkMode' }).then((result)=>{
+    let darkMode = initialState.darkMode;
     if(result.value){
+      darkMode = JSON.parse(result.value);
       rootDispatcher.updateDarkMode(JSON.parse(result.value))
-      document.body.classList.toggle('dark', JSON.parse(result.value));
     }
+    document.body.classList.toggle('dark', darkMode);
   });
   Storage.get({ key: 'settings' }).then((result)=>{
     if(result.value){
