@@ -217,7 +217,7 @@ const Friends: React.FC = () => {
         <IonModal isOpen={showModal} cssClass='add-friend-modal'>
           <IonHeader>
             <IonToolbar color="primary">
-              <IonTitle>Add a freind</IonTitle>
+              <IonTitle>Add a friend</IonTitle>
               <IonButtons slot="end">
                 <IonButton onClick={() => {setQrScanner(!qrScanner)}}>
                   <IonIcon icon={qrCodeSharp} slot="icon-only"/>
