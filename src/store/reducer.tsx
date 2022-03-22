@@ -41,7 +41,7 @@ export const initialState = {
     adult: 0,
     darkMode: true,
     indicators : {menu: false, friend_request: 0, suggestions: 0, groups: 0},
-    settings: {slides: true, buttons: false}
+    settings: {slides: false, buttons: true}
 }
 
 export interface StateProps {
