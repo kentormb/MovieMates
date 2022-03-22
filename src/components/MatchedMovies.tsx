@@ -65,7 +65,6 @@ const SelectedMovies: React.FC<Prop> = ({id, isGroup}) => {
         }
     }
     useEffect(() => {
-
         if(isGroup){
             getMatchedGroupedMovies(getCurrentUser().uid, id ).then((results) => getMovies(results));
         }

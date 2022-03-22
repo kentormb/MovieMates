@@ -31,7 +31,6 @@ const Friend: React.FC = () => {
             rootDispatcher.decFriendsCount()
             history.goBack()
         })
-
     }
 
   useIonViewWillEnter(()=>{

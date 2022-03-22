@@ -4,16 +4,16 @@ import {
     IonButtons, IonCheckbox,
     IonContent,
     IonHeader, IonIcon, IonItem, IonLabel, IonList, IonModal,
-    IonPage, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonSlide, IonSlides,
+    IonPage, IonRefresher, IonRefresherContent,
     IonTitle,
     IonToolbar, useIonViewWillEnter
 } from '@ionic/react';
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import { useParams } from 'react-router';
 import './Page.css';
 import MatchedMovies from '../components/MatchedMovies';
 import {deleteGroup, getGroupById, deleteGroupUser, addGroupFriends, getFriends} from "../components/Api";
-import {trashOutline, trashSharp} from "ionicons/icons";
+import {peopleOutline, trashOutline, trashSharp} from "ionicons/icons";
 import { useHistory } from 'react-router-dom';
 import {getCurrentUser} from "../auth";
 import {RefresherEventDetail} from "@ionic/core";
@@ -23,30 +23,18 @@ const Group: React.FC = () => {
     const history = useHistory();
     const [group, setGroup] = useState({groupName: '', id: ''});
     const [users, setUsers] = useState([]);
-    const slider = useRef<HTMLIonSlidesElement>(null);
-    const [value, setValue] = useState("0");
     const [isCreator, setIsCreator] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [showModalFriends, setShowModalFriends] = useState(false);
     const [selectedFriends, setSelectedFriends] = useState([]);
     const [friendList, setFriendList] = useState([]);
 
-    const handleSegmentChange = (e: any) => {
-        setValue(e.detail.value);
-        slider.current!.slideTo(e.detail.value);
-    };
-
-    const handleSlideChange = async (event: any) => {
-        let index: number = 0;
-        await event.target.getActiveIndex().then((value: any) => (index=value));
-        setValue(''+index)
-    }
     function doRefresh(event: CustomEvent<RefresherEventDetail>) {
         getData()
         event.detail.complete()
     }
     function getData(){
         getGroupById(getCurrentUser().uid, id).then(res =>{
-            console.log(res)
             if(res.error === 0){
                 setIsCreator(res.results.isCreator);
                 if(res.results.group.length){
@@ -105,6 +93,9 @@ const Group: React.FC = () => {
                       <IonBackButton />
                   </IonButtons>
                   <IonTitle>{group.groupName}</IonTitle>
+                  <IonButton  slot="end" color="dark" onClick={ () => setShowModalFriends(true) }>
+                      <IonIcon icon={peopleOutline} slot="icon-only"/> {users.length ? ' ('+users.length+')' : ''}
+                  </IonButton>
                   <IonButton  slot="end" onClick={ () => { deleteGroupHandle(id) }} color="medium">
                       <IonIcon ios={trashSharp} md={trashOutline}/>
                   </IonButton>
@@ -114,39 +105,37 @@ const Group: React.FC = () => {
               <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
                   <IonRefresherContent/>
               </IonRefresher>
-              <IonSegment value={value} onIonChange={(e) => handleSegmentChange(e)} >
-                  <IonSegmentButton value="0" >
-                      <IonLabel>Movies</IonLabel>
-                  </IonSegmentButton>
-                  <IonSegmentButton value="1">
-                      <IonLabel>Friends</IonLabel>
-                  </IonSegmentButton>
-              </IonSegment>
-              <IonContent>
-                  <IonSlides onIonSlideDidChange={(e) => handleSlideChange(e)} ref={slider}>
-                      <IonSlide>
-                          {users.length ? <MatchedMovies id={id} isGroup={true} /> : ''}
-                      </IonSlide>
-                      <IonSlide>
-                          <IonList className={"mm-list"}>
-                              {users.map((item) =>
-                                  <IonItem key={item.id} class='mm-request mm-item' >
-                                      <IonAvatar className="friend-avatar">
-                                          <img src={item.icon} alt=''/>
-                                      </IonAvatar>
-                                      <IonLabel>{item.username} {item.name!=='' && item.name!==null ? '(' + item.name + ')' : ''}</IonLabel>
-                                      {isCreator ? <IonIcon onClick={()=>{removeUserFromGroup(item.id)}} size="medium" ios={trashSharp} md={trashOutline}/> : ''}
-                                  </IonItem>
-                              )}
-                              {isCreator ?
-                                  <IonItem  key={0} class='mm-request mm-item'>
-                                      <IonButton expand="full" className={'add-friends-button'} onClick={()=> getUserFriends().then(r => {setShowModal(true)})}>Add Friend</IonButton>
-                                  </IonItem>
-                             : '' }
-                          </IonList>
-                      </IonSlide>
-                  </IonSlides>
-              </IonContent>
+              {users.length ? <MatchedMovies id={id} isGroup={true} /> : ''}
+              <IonModal isOpen={showModalFriends} cssClass='friends-modal'>
+                  <IonHeader>
+                      <IonToolbar color="primary">
+                          <IonTitle>Friends</IonTitle>
+                          <IonButtons slot="end">
+                              <IonButton onClick={() => setShowModalFriends(false)}>
+                                  <IonIcon icon="close" slot="icon-only"/>
+                              </IonButton>
+                          </IonButtons>
+                      </IonToolbar>
+                  </IonHeader>
+                  <IonContent>
+                      <IonList className={"mm-list"}>
+                          {users.map((item) =>
+                              <IonItem key={item.id} class='mm-request mm-item' >
+                                  <IonAvatar className="friend-avatar">
+                                      <img src={item.icon} alt=''/>
+                                  </IonAvatar>
+                                  <IonLabel>{item.username} {item.name!=='' && item.name!==null ? '(' + item.name + ')' : ''}</IonLabel>
+                                  {isCreator ? <IonIcon onClick={()=>{removeUserFromGroup(item.id)}} size="medium" ios={trashSharp} md={trashOutline}/> : ''}
+                              </IonItem>
+                          )}
+                          {isCreator ?
+                              <IonItem  key={0} class='mm-request mm-item'>
+                                  <IonButton expand="full" className={'add-friends-button'} onClick={()=> getUserFriends().then(r => {setShowModal(true)})}>Add Friend</IonButton>
+                              </IonItem>
+                              : '' }
+                      </IonList>
+                  </IonContent>
+              </IonModal>
               <IonModal isOpen={showModal} cssClass='add-friend-modal'>
                   <IonHeader>
                       <IonToolbar color="primary">

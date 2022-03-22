@@ -31,6 +31,7 @@
 
 .selected_board .card .content{
     height: 23px;
+    padding: 4px;
 }
 .selected_board .card .title{
     display: none;
@@ -90,10 +91,10 @@
     margin-left: -15px;
 }
 
-.selected_board .card.dis-likes .seen-layer{
-    height: 90%;
-    height: calc(100% - 32px);
-}
+/*.selected_board .card.dis-likes .seen-layer{*/
+/*    height: 90%;*/
+/*    height: calc(100% - 32px);*/
+/*}*/
 
 .selected_board .card .action{
     position: absolute;

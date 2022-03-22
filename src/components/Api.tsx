@@ -201,7 +201,7 @@ export function getFriendById(uid: string, fid: number){
 
     const request = requestOptions();
     const url = request.domain + '/?status=9&uid=' + uid + '&fid=' + fid + '&token=' + request.token;
-    //console.log('get freind by id', url);
+    //console.log('get friend by id', url);
     return fetch(url, request.options)
         .then(res => res.json())
         .then((result) => {
@@ -336,7 +336,7 @@ export function getGroupById(uid: string, gid: number){
 
     const request = requestOptions();
     const url = request.domain + '/?status=24&gid=' + gid + '&uid=' + uid + '&token=' + request.token;
-    //console.log('get freind by id', url);
+    //console.log('get friend by id', url);
     return fetch(url, request.options)
         .then(res => res.json())
         .then((result) => {
