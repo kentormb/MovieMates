@@ -1,1 +1,12 @@
-{}
+{
+  "appId": "xyz.tediousapp.mm",
+  "appName": "MovieMates",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "build",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  }
+}
