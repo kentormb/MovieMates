@@ -38,7 +38,7 @@ ReactDOM.render(
         <App />
     </Provider>,
     document.getElementById('root'));
-SplashScreen.hide();
+SplashScreen.hide().then();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

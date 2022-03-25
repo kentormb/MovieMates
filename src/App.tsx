@@ -1,8 +1,8 @@
 import Login from './pages/Login';
 import Register from "./pages/Register";
 import AppPrivate from './AppPrivate';
-import React, {useEffect} from 'react';
-import {IonApp, IonLoading, IonRouterOutlet} from '@ionic/react';
+import React, {useEffect, useState} from 'react';
+import {IonAlert, IonApp, IonLoading, IonRouterOutlet} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 import {AuthContext, useAuthInit} from './auth';
@@ -15,11 +15,10 @@ import Reset from "./pages/Reset";
 const App: React.FC = () => {
 
   const {loading,auth} = useAuthInit();
-
   const { Storage } = Plugins;
-
   const dispatch = useDispatch();
   const rootDispatcher = new RootDispatcher(dispatch);
+  const [showAlert, setShowAlert] = useState(false);
 
   Storage.get({ key: 'darkMode' }).then((result)=>{
     let darkMode = initialState.darkMode;
@@ -37,11 +36,11 @@ const App: React.FC = () => {
 
   const backButton = (ev) => {
     ev.preventDefault()
-    if(window.history.back() !== undefined){
-      window.history.back()
+    if(window.location.pathname === '/my/movies'){
+      setShowAlert(true)
     }
     else{
-      window.location.href = '/my/movies'
+      window.history.back()
     }
   }
 
@@ -73,6 +72,28 @@ const App: React.FC = () => {
             <Redirect from="/" to="/login" exact />
           </IonRouterOutlet>
         </IonReactRouter>
+        <IonAlert
+            isOpen={showAlert}
+            onDidDismiss={() => setShowAlert(false)}
+            header={'Exit App'}
+            message={'Do you want to close the app?'}
+            buttons={[
+              {
+                text: 'Cancel',
+                role: 'cancel',
+                cssClass: 'secondary',
+                handler: () => {
+                  window.location.href = '/my/movies';
+                }
+              },
+              {
+                text: 'Exit',
+                handler: () => {
+                  navigator['app'].exitApp();
+                }
+              }
+            ]}
+        />
       </AuthContext.Provider>
     </IonApp>
   );
