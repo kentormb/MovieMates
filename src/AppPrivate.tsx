@@ -28,7 +28,7 @@ const App: React.FC = () => {
 
     useInterval(() => {
         getIndicators(getCurrentUser().uid).then((result) => {
-            //console.log(result);
+            //console.log('zzzzz indic',result);
             rootDispatcher.updateIndicators(result)
         });
     }, timer > 0 ? 30000 : null);
@@ -51,6 +51,20 @@ const App: React.FC = () => {
             }
         }, [delay]);
     }
+
+    function onPause() {
+        setTimer(null)
+    }
+    function onResume() {
+        setTimer(1)
+    }
+
+    useEffect(()=>{
+        document.removeEventListener("pause", onPause, false);
+        document.addEventListener("pause", onPause, false);
+        document.removeEventListener("resume", onResume, false);
+        document.addEventListener("resume", onResume, false);
+    },[]);
 
     if(!loggedIn.loggedIn){
         setTimer(null)
